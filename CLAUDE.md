@@ -45,41 +45,39 @@ HoDiritto is a personal healthcare assistant for Italian workers. It helps users
 
 ## Current Repo State
 
-### What's In The Repo Now
-The repo currently contains a **Klyren** landing page (B2B lead gen agency) — this is a different site/template, NOT the HoDiritto target.
-
-### Current File Structure
+### File Structure
 ```
 Vetrina26/
-├── index.html    # Klyren landing page (~1040 lines, self-contained HTML+CSS+JS)
+├── index.html    # Full HoDiritto website (HTML + CSS + JS, self-contained)
 └── CLAUDE.md     # This file
 ```
 
-### Current Tech Stack (Klyren template in repo)
+### Tech Stack
 - **Type**: Static single-page site, single `index.html`
 - **Language**: Vanilla HTML, CSS, JavaScript — no frameworks, no build tools
-- **Font**: Google Fonts — Inter (weights: 300–900)
+- **Fonts**: Google Fonts — Inter (300–900) + Outfit (400–900)
 - **Icons**: Inline SVGs
 - **Styling**: All CSS embedded in `<style>` within `<head>`
 - **JavaScript**: All JS in `<script>` at end of `<body>`
 - **No dependencies**: No `package.json`, no `node_modules`
 
-### Current Design System (Klyren)
-- Dark theme: near-black background (`#0a0a0a`)
-- Purple accent palette (`#9333EA`, `#C084FC`, `#A855F7`)
-- Font: Inter, system-ui fallback
-- Animations: cursor glow, floating particles, scroll reveal, counter animation, card spotlight, parallax orbs
+### Design System
+- **Theme**: Light/clean with indigo/cyan accents
+- **Background**: `#FAFBFF` (soft blue-white)
+- **Primary**: `#4F46E5` (indigo) with gradient to `#7C3AED` and `#06B6D4` (cyan)
+- **Typography**: Outfit (headings) + Inter (body)
+- **Cards**: Glassmorphism, soft shadows, gradient top-borders on hover
+- **Animations**: Scroll reveal, counter animation, process line, parallax shapes, dot pulse, gradient shift, button shine
 
-### Current Sections (Klyren)
-1. Nav (fixed, with hamburger mobile menu)
-2. Hero (full-viewport, animated orbs background)
-3. Marquee (auto-scrolling keywords)
-4. Services (5 cards in grid)
-5. Process (4-step horizontal timeline)
-6. Results (3 metrics + 3 testimonials)
-7. About (brand story)
-8. Contact (CTA block + form)
-9. Footer (logo + socials)
+### Sections
+1. **Nav** — Fixed, glassmorphism on scroll, logo "H" icon + "HoDiritto", links + auth buttons, hamburger mobile
+2. **Hero** — Full-viewport, floating gradient shapes, dot grid, badge, headline with gradient text, stats row
+3. **Features** (`#features`) — 3 cards: Proattivo, Personalizzato, Dalla tua parte
+4. **Stats** (`#stats`) — 3 animated counter cards: 16M, 32Mrd€, 1 su 2
+5. **Process** (`#process`) — 3-step timeline with animated connecting line
+6. **Case Study** (`#case-study`) — Carlo's story with loss/win comparison boxes + notification
+7. **Dual CTA** (`#cta`) — Worker form (waiting list) + Company form (contact)
+8. **Footer** — Logo, legal links, copyright
 
 ---
 
@@ -98,29 +96,11 @@ open index.html
 ```
 
 ### How to Modify
-- **All code is in `index.html`** — CSS in `<style>` (lines 11–573), HTML (lines 575–900), JS in `<script>` (lines 902–1038)
-- No build step — edit and refresh
-- Form uses `onsubmit="return false"` (no backend)
-- Social links are placeholder `href="#"`
+- **All code is in `index.html`** — edit and refresh, no build step
+- Forms have no backend connected (textarea + button only)
+- Auth links (Registrati/Accedi) are placeholder `href="#"`
 
-### Responsive Breakpoints (current)
-- `768px` — Mobile nav, process steps stack
-- `640px` — Metrics stack
-- `500px` — Form single column
-- `420px` — Service cards single column
-
----
-
-## Key Differences: Current Repo vs Target Site
-
-| Aspect | Current (Klyren) | Target (HoDiritto) |
-|---|---|---|
-| **Language** | English | Italian |
-| **Business** | B2B lead gen agency | Healthcare rights assistant |
-| **Audience** | SMBs needing outbound | Italian workers & companies |
-| **Sections** | Services, Process, Results, About, Contact | Features, Stats, How-It-Works, Case Study, Dual CTA |
-| **Forms** | Single contact form | Two forms (worker waiting list + company contact) |
-| **Auth** | None | Has Registrati/Accedi (Register/Login) |
-| **CTA Style** | "Book a Call" | "Entra nel portale" / "Waiting list" |
-| **Testimonials** | 3 generic review cards | 1 detailed case study (Carlo) |
-| **Stats** | 500+ Leads, 95% Deliverability, $12K MRR | 16M Italians, €32B out-of-pocket, 1 in 2 uninformed |
+### Responsive Breakpoints
+- `900px` — Mobile nav (hamburger menu)
+- `768px` — Feature cards, stats, process steps, CTA cards stack
+- `600px` — Footer stacks
