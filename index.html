@@ -320,6 +320,51 @@ button,input,textarea{font-family:inherit;border:none;outline:none}
 
 @media(max-width:768px){.features-grid{grid-template-columns:1fr}}
 
+/* ─── AUDIENCE ─── */
+#audience{background:var(--bg);position:relative}
+.audience-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:24px;margin-top:56px;
+}
+.audience-card{
+  background:var(--bg-white);
+  border:1px solid var(--border);border-radius:var(--radius-xl);
+  padding:44px 32px;position:relative;overflow:hidden;
+  transition:all .5s var(--transition);
+}
+.audience-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  opacity:0;transition:opacity .4s;
+}
+.audience-card:nth-child(1)::before{background:var(--gradient-primary)}
+.audience-card:nth-child(2)::before{background:linear-gradient(90deg,var(--success),#34D399)}
+.audience-card:nth-child(3)::before{background:linear-gradient(90deg,var(--accent),var(--accent-light))}
+.audience-card:hover{
+  transform:translateY(-6px);box-shadow:var(--shadow-xl);
+  border-color:transparent;
+}
+.audience-card:hover::before{opacity:1}
+.audience-card-icon{
+  width:64px;height:64px;border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;margin-bottom:24px;
+}
+.audience-card-icon.indigo{background:var(--primary-glow)}
+.audience-card-icon.green{background:var(--success-glow)}
+.audience-card-icon.cyan{background:var(--accent-glow)}
+.audience-card h3{
+  font-family:'Outfit',sans-serif;
+  font-size:22px;font-weight:700;margin-bottom:8px;letter-spacing:-.01em;
+}
+.audience-card>p{font-size:15px;color:var(--text-secondary);line-height:1.75;margin-bottom:20px}
+.audience-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.audience-list li{
+  font-size:14px;color:var(--text-secondary);line-height:1.65;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.audience-list li svg{flex-shrink:0;margin-top:2px}
+@media(max-width:768px){.audience-grid{grid-template-columns:1fr}}
+
 /* ─── STATS ─── */
 #stats{position:relative;overflow:hidden}
 #stats::before{
@@ -584,7 +629,8 @@ body::after{
       HoDiritto
     </a>
     <ul class="nav-links" id="navLinks">
-      <li><a href="#features">Chi siamo</a></li>
+      <li><a href="#features">Cos'è</a></li>
+      <li><a href="#audience">Per chi è</a></li>
       <li><a href="#process">Come funziona</a></li>
       <li><a href="#cta">Unisciti a noi</a></li>
     </ul>
@@ -611,7 +657,7 @@ body::after{
       Assistente sanitario intelligente
     </div>
     <h1 class="reveal reveal-delay-1">La tua salute ha dei diritti.<br><span class="gradient-text">Noi ti aiutiamo a usarli.</span></h1>
-    <p class="hero-sub reveal reveal-delay-2">HoDiritto è il tuo assistente sanitario personale. Ti dice esattamente cosa ti spetta dal tuo fondo sanitario, dal SSN, in base alla tua situazione, e ti accompagna passo per passo per ottenerlo.</p>
+    <p class="hero-sub reveal reveal-delay-2">HoDiritto è il tuo assistente sanitario digitale personale. Analizza il tuo profilo — contratto, regione, età, patologie, famiglia — e ti dice esattamente cosa ti spetta dal fondo sanitario e dal SSN. Poi ti guida passo per passo per ottenerlo.</p>
     <div class="hero-ctas reveal reveal-delay-3">
       <a href="#cta" class="btn btn-primary">
         Entra nel portale
@@ -659,7 +705,8 @@ body::after{
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         Cos'è HoDiritto?
       </p>
-      <h2 class="section-title reveal" style="max-width:700px;margin-inline:auto">In Italia milioni di lavoratori hanno diritti sanitari che non conoscono. <span class="gradient-text">HoDiritto li trova per te.</span></h2>
+      <h2 class="section-title reveal" style="max-width:700px;margin-inline:auto">Il sistema sanitario italiano è opaco e frammentato. <span class="gradient-text">HoDiritto lo rende semplice.</span></h2>
+      <p class="section-subtitle reveal" style="margin-inline:auto;text-align:center">Due pilastri — SSN e fondi sanitari integrativi — ma diritti invisibili. HoDiritto abbatte la barriera informativa.</p>
     </div>
     <div class="features-grid">
       <div class="feature-card reveal">
@@ -667,21 +714,106 @@ body::after{
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M2 8c0-3.3 2.7-6 6-6"/><path d="M22 8c0-3.3-2.7-6-6-6"/></svg>
         </div>
         <h3>Proattivo</h3>
-        <p>Non aspettiamo che tu faccia domande. Ti avvisiamo noi, prima che scadano i termini e prima che tu perda un rimborso.</p>
+        <p>Non aspettiamo che tu faccia domande. Ti avvisiamo prima che scadano i termini, ti calcoliamo quanto puoi recuperare e ti ricordiamo ogni scadenza del tuo fondo.</p>
       </div>
       <div class="feature-card reveal reveal-delay-1">
         <div class="feature-icon cyan">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
         </div>
         <h3>Personalizzato</h3>
-        <p>Ogni profilo è diverso. HoDiritto analizza la tua situazione specifica — età, regione, fondo e contratti — e ti mostra solo quello che spetta a te.</p>
+        <p>Ogni profilo è diverso. HoDiritto analizza contratto, regione, età, patologie e situazione familiare — e ti mostra solo quello che spetta a te e ai tuoi familiari a carico.</p>
       </div>
       <div class="feature-card reveal reveal-delay-2">
         <div class="feature-icon warm">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </div>
         <h3>Dalla tua parte</h3>
-        <p>HoDiritto non lavora per i fondi o le assicurazioni. Lavora solo per te. L'obiettivo è uno solo: che tu ottenga tutto.</p>
+        <p>HoDiritto non lavora per i fondi o le assicurazioni. Lavora solo per te. Ti diciamo cosa scrivere al medico sulla ricetta per evitare rigetti e come ottenere ogni rimborso.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── AUDIENCE ─── -->
+<section class="section" id="audience">
+  <div class="container">
+    <div style="text-align:center">
+      <p class="section-label reveal">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Per chi è HoDiritto
+      </p>
+      <h2 class="section-title reveal" style="max-width:750px;margin-inline:auto">Tre profili. <span class="gradient-text">Un unico obiettivo.</span></h2>
+      <p class="section-subtitle reveal" style="margin-inline:auto;text-align:center">Che tu sia un lavoratore, un paziente cronico o un'azienda — HoDiritto lavora per farti ottenere ciò che ti spetta.</p>
+    </div>
+    <div class="audience-grid">
+      <div class="audience-card reveal">
+        <div class="audience-card-icon indigo">&#128119;</div>
+        <h3>Per il lavoratore</h3>
+        <p>Hai un fondo sanitario integrativo nel contratto che vale €800-1.200 l'anno. L'80% dei lavoratori non sa di averlo o non riesce ad usarlo.</p>
+        <ul class="audience-list">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Tutte le prestazioni del tuo fondo con franchigia, massimale e frequenza
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Dicitura esatta da far scrivere al medico sulla ricetta — niente rigetti
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Confronto SSN vs Fondo: costo, tempi, convenienza per ogni prestazione
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Estensione ai familiari a carico inclusi nel fondo
+          </li>
+        </ul>
+      </div>
+      <div class="audience-card reveal reveal-delay-1">
+        <div class="audience-card-icon green">&#129657;</div>
+        <h3>Per chi ha una patologia cronica</h3>
+        <p>Crohn, diabete, patologie tiroidee, cardiovascolari, rare — hai diritti sanitari aggiuntivi che quasi nessuno conosce.</p>
+        <ul class="audience-list">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Esenzioni ticket con codice esatto per la tua patologia
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            PDTA regionale: il tuo percorso di cura strutturato con visite ed esami di follow-up
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Supporto psicologico e nutrizionale coperto dal SSN o dal fondo
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Legge 104 e invalidità civile: valutazione e guida completa alla richiesta
+          </li>
+        </ul>
+      </div>
+      <div class="audience-card reveal reveal-delay-2">
+        <div class="audience-card-icon cyan">&#127970;</div>
+        <h3>Per l'azienda</h3>
+        <p>Paghi €10-15 al mese per dipendente per il fondo sanitario. Ma i tuoi dipendenti lo stanno usando? HoDiritto trasforma quel costo in un benefit reale.</p>
+        <ul class="audience-list">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Tasso di utilizzo del fondo aumentato in modo documentato
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Dashboard HR con dati aggregati e anonimizzati sul valore recuperato
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Employer branding: il welfare sanitario diventa un argomento di retention
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Meno assenteismo grazie alla prevenzione attivata sistematicamente
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -735,21 +867,21 @@ body::after{
           <div class="step-inner">1</div>
         </div>
         <h3>Raccontaci chi sei</h3>
-        <p>Inserisci il tuo profilo in 3 minuti: contratto, situazione familiare, salute. Niente di complicato.</p>
+        <p>Inserisci contratto, regione, età, patologie e situazione familiare. In 3 minuti costruisci il tuo profilo sanitario personale.</p>
       </div>
       <div class="process-step reveal reveal-delay-1">
         <div class="step-number">
           <div class="step-inner">2</div>
         </div>
         <h3>Analizziamo i tuoi diritti</h3>
-        <p>HoDiritto incrocia il tuo profilo con il tuo fondo sanitario e il SSN. Trova tutto quello che ti spetta.</p>
+        <p>HoDiritto incrocia il tuo profilo con fondo sanitario, SSN, LEA, esenzioni e PDTA regionali. Trova tutto quello che ti spetta — anche per i familiari a carico.</p>
       </div>
       <div class="process-step reveal reveal-delay-2">
         <div class="step-number">
           <div class="step-inner">3</div>
         </div>
-        <h3>Ti diciamo come ottenerli</h3>
-        <p>Per ogni diritto ti spieghiamo esattamente come richiedere, cosa allegare, dove andare. Niente errori.</p>
+        <h3>Ti guidiamo passo per passo</h3>
+        <p>Per ogni prestazione: cosa scrivere nella prescrizione, quale modulo usare, quali documenti allegare, struttura convenzionata o rimborso — generato con AI.</p>
       </div>
     </div>
   </div>
@@ -774,21 +906,21 @@ body::after{
           <div class="case-role">Operaio metalmeccanico</div>
         </div>
       </div>
-      <p class="case-body">Carlo ha scoperto di avere un'ernia inguinale. Sul SSN: lista d'attesa di 9 mesi. Non sapeva che <strong>Metasalute copre il ricovero chirurgico in struttura convenzionata</strong>.</p>
+      <p class="case-body">Carlo ha scoperto di avere un'ernia inguinale. Sul SSN: lista d'attesa di 9 mesi. Non sapeva che <strong>Metasalute copre il ricovero chirurgico in struttura convenzionata</strong>. Il suo medico ha scritto una prescrizione generica — dicitura sbagliata, richiesta rigettata dal fondo. Ha finito per pagare di tasca propria.</p>
       <div class="case-grid">
         <div class="case-box loss">
-          <div class="case-box-label">Perdita stimata</div>
-          <p><strong>&euro;560</strong> + 9 mesi di attesa inutile per un intervento già coperto dal suo fondo sanitario.</p>
+          <div class="case-box-label">Senza HoDiritto</div>
+          <p><strong>&euro;560</strong> pagati di tasca propria + 9 mesi di attesa inutile. Prescrizione rigettata per dicitura errata. Nessuna idea del massimale residuo.</p>
         </div>
         <div class="case-box win">
-          <div class="case-box-label">Cosa ti avremmo notificato</div>
-          <p>Carlo, hai bisogno di un intervento? Con Metasalute puoi farlo subito senza aspettare 9 mesi.</p>
+          <div class="case-box-label">Con HoDiritto</div>
+          <p>Alert proattivo: "Carlo, Metasalute copre il ricovero in struttura convenzionata." Dicitura esatta generata per il medico. Prenotazione diretta, zero costi.</p>
         </div>
       </div>
       <div class="case-notification">
-        &#128276; Hai un figlio a carico? Iscrivilo gratuitamente a Metasalute — ha diritto alle tue stesse prestazioni.
+        &#128276; Carlo, hai un figlio a carico? Iscrivilo gratuitamente a Metasalute — ha diritto alle tue stesse prestazioni. Hai ancora €340 di massimale residuo per odontoiatria quest'anno.
       </div>
-      <div class="case-quote">Con HoDiritto, Carlo avrebbe risparmiato tempo e denaro, ottenendo ciò che gli spettava.</div>
+      <div class="case-quote">Una dicitura sbagliata sulla ricetta è la causa principale dei rigetti. HoDiritto la elimina — e Carlo avrebbe ottenuto tutto ciò che gli spettava, senza errori.</div>
     </div>
   </div>
 </section>
@@ -808,11 +940,12 @@ body::after{
       <div class="cta-card reveal">
         <div class="cta-card-icon">&#128100;</div>
         <h3>Sei un lavoratore?</h3>
-        <p>Probabilmente hai già una copertura sanitaria e non lo sai. HoDiritto analizza il tuo profilo e ti dice esattamente cosa ti spetta.</p>
+        <p>Hai un fondo sanitario nel contratto che vale €800-1.200 l'anno. HoDiritto ti mostra ogni prestazione, ti genera la dicitura per il medico e ti guida al rimborso.</p>
         <ul class="cta-bullets">
-          <li>16 milioni di italiani ce l'hanno inclusa nel contratto</li>
-          <li>Ogni anno paghiamo 32 miliardi di € in visite rimborsabili</li>
-          <li>1 lavoratore su 2 non sa cosa copre il proprio fondo sanitario</li>
+          <li>Matching personalizzato con le prestazioni del tuo fondo specifico</li>
+          <li>Guida operativa: cosa scrivere al medico, documenti da allegare, moduli da usare</li>
+          <li>Confronto SSN vs Fondo — ti suggeriamo la via più veloce e meno costosa</li>
+          <li>Estensione ai familiari a carico e alert prima delle scadenze</li>
         </ul>
         <div class="cta-form">
           <label style="font-size:14px;font-weight:600;color:var(--text)">Vuoi scoprire cosa ti spetta?</label>
@@ -827,11 +960,12 @@ body::after{
       <div class="cta-card reveal reveal-delay-1">
         <div class="cta-card-icon">&#127970;</div>
         <h3>Sei un'azienda?</h3>
-        <p>Stai già investendo nel welfare dei tuoi dipendenti. Ma lo stanno usando davvero? HoDiritto abbatte le barriere e aumenta il ROI.</p>
+        <p>Paghi €10-15 al mese per dipendente per il fondo sanitario. HoDiritto trasforma quel costo invisibile in un benefit percepito, utilizzato e misurabile.</p>
         <ul class="cta-bullets">
-          <li>Paghi dai 70 ai 200€ per dipendente ogni anno</li>
-          <li>1 dipendente su 2 non lo utilizza: è un investimento perso!</li>
-          <li>Aumenta la soddisfazione e diminuisci le chiamate all'HR</li>
+          <li>Tasso di utilizzo del fondo documentato e in crescita</li>
+          <li>Dashboard HR aggregata: prestazioni attivate, valore recuperato, ROI welfare</li>
+          <li>Employer branding reale: dipendenti più soddisfatti e più fedeli</li>
+          <li>Prevenzione attivata = meno assenteismo</li>
         </ul>
         <div class="cta-form">
           <label style="font-size:14px;font-weight:600;color:var(--text)">Parliamone</label>
