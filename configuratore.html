@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configuratore — Falegnameria Manzini</title>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { background: #faf7f2; }
+
+  /* ─── Configuratore Manzini ─── */
+  .fm-config, .fm-config *, .fm-config *::before, .fm-config *::after { box-sizing: border-box; }
+  .fm-config {
+    --fm-bg:       #faf7f2;
+    --fm-surface:  #ffffff;
+    --fm-ink:      #1a1410;
+    --fm-muted:    #6b5d4f;
+    --fm-line:     rgba(26,20,16,.12);
+    --fm-line-strong: rgba(26,20,16,.85);
+    --fm-wash:     rgba(26,20,16,.04);
+    --fm-radius:   8px;
+
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--fm-ink);
+    background: var(--fm-bg);
+    padding: 96px 24px;
+  }
+  .fm-config__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 40fr 60fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .fm-config__controls {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+  .fm-config__header { margin: 0; }
+  .fm-config__title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(30px, 4vw, 44px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .fm-config__subtitle {
+    font-size: 16px;
+    color: var(--fm-muted);
+    line-height: 1.55;
+    margin: 10px 0 0;
+    max-width: 38ch;
+  }
+
+  .fm-config__group-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--fm-muted);
+    margin: 0 0 14px;
+  }
+
+  /* ─ chips ─ */
+  .fm-config__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .fm-config__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 16px;
+    background: var(--fm-surface);
+    border: 1px solid var(--fm-line);
+    border-radius: 999px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fm-ink);
+    cursor: pointer;
+    transition: border-color .25s ease, background .25s ease, transform .15s ease;
+  }
+  .fm-config__chip:hover { border-color: var(--fm-line-strong); }
+  .fm-config__chip:active { transform: translateY(1px); }
+  .fm-config__chip[aria-pressed="true"] {
+    border-color: var(--fm-line-strong);
+    background: var(--fm-wash);
+  }
+  .fm-config__chip-icon { font-size: 16px; line-height: 1; }
+
+  /* ─ swatches ─ */
+  .fm-config__swatches {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .fm-config__swatch {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: var(--fm-surface);
+    border: 1px solid var(--fm-line);
+    border-radius: var(--fm-radius);
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: var(--fm-ink);
+    transition: border-color .25s ease, background .25s ease, transform .15s ease;
+  }
+  .fm-config__swatch:hover { border-color: var(--fm-line-strong); }
+  .fm-config__swatch:active { transform: translateY(1px); }
+  .fm-config__swatch[aria-pressed="true"] {
+    border-color: var(--fm-line-strong);
+    background: var(--fm-wash);
+  }
+  .fm-config__swatch-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.08);
+  }
+  .fm-config__swatch-dot--chiaro { background: linear-gradient(135deg,#efdcba 0%,#d8bf94 100%); }
+  .fm-config__swatch-dot--medio  { background: linear-gradient(135deg,#b98859 0%,#7e5531 100%); }
+  .fm-config__swatch-dot--scuro  { background: linear-gradient(135deg,#4a3221 0%,#2a1a0e 100%); }
+  .fm-config__swatch-text { display: flex; flex-direction: column; min-width: 0; }
+  .fm-config__swatch-name { font-size: 14px; font-weight: 600; line-height: 1.2; }
+  .fm-config__swatch-meta { font-size: 11px; color: var(--fm-muted); margin-top: 3px; line-height: 1.2; }
+
+  /* ─ badge ─ */
+  .fm-config__badge {
+    display: inline-block;
+    padding: 10px 16px;
+    background: var(--fm-ink);
+    color: #faf7f2;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    align-self: flex-start;
+    transform-origin: left center;
+  }
+  .fm-config__badge.is-pulse { animation: fmPulse .5s ease; }
+  @keyframes fmPulse {
+    0%   { transform: scale(1);    }
+    50%  { transform: scale(1.06); }
+    100% { transform: scale(1);    }
+  }
+
+  /* ─ cta ─ */
+  .fm-config__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 26px;
+    background: var(--fm-ink);
+    color: #faf7f2;
+    border-radius: var(--fm-radius);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    align-self: flex-start;
+    border: 1px solid var(--fm-ink);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .fm-config__cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px -14px rgba(26,20,16,.45);
+  }
+  .fm-config__cta-arrow { transition: transform .2s ease; }
+  .fm-config__cta:hover .fm-config__cta-arrow { transform: translateX(3px); }
+
+  /* ─ stage (colonna destra) ─ */
+  .fm-config__stage {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .fm-config__frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--fm-radius);
+    overflow: hidden;
+    background: #e8e0d4;
+    box-shadow: 0 1px 0 var(--fm-line), 0 30px 60px -30px rgba(26,20,16,.25);
+  }
+  .fm-config__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1);
+    transition: opacity .4s ease, transform .6s cubic-bezier(.2,.7,.2,1);
+  }
+  .fm-config__img.is-visible { opacity: 1; }
+  .fm-config__frame:hover .fm-config__img.is-visible { transform: scale(1.03); }
+  .fm-config__overlay {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    padding: 8px 14px;
+    background: rgba(26,20,16,.82);
+    -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+    color: #faf7f2;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    border-radius: 4px;
+    pointer-events: none;
+  }
+  .fm-config__desc {
+    font-size: 15px;
+    color: var(--fm-muted);
+    line-height: 1.55;
+    font-style: italic;
+    margin: 0;
+    min-height: 2.4em;
+    transition: opacity .2s ease;
+  }
+  .fm-config__desc.is-fading { opacity: 0; }
+
+  /* ─ mobile ─ */
+  @media (max-width: 768px) {
+    .fm-config { padding: 56px 20px; }
+    .fm-config__inner {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+    .fm-config__stage { order: -1; }
+    .fm-config__controls { gap: 28px; }
+    .fm-config__swatches { grid-template-columns: 1fr; }
+    .fm-config__subtitle { max-width: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="fm-config" id="configuratore" aria-labelledby="fm-config-title">
+  <div class="fm-config__inner">
+
+    <div class="fm-config__controls">
+      <header class="fm-config__header">
+        <h2 class="fm-config__title" id="fm-config-title">Immagina il tuo spazio.</h2>
+        <p class="fm-config__subtitle">Scegli il prodotto e il legno. Vedi come cambia la stanza.</p>
+      </header>
+
+      <div>
+        <span class="fm-config__group-label">Prodotto</span>
+        <div class="fm-config__chips" role="group" aria-label="Categoria prodotto">
+          <button type="button" class="fm-config__chip" data-category="cucina"   aria-pressed="true"><span class="fm-config__chip-icon" aria-hidden="true">&#x1F373;</span>Cucina</button>
+          <button type="button" class="fm-config__chip" data-category="libreria" aria-pressed="false"><span class="fm-config__chip-icon" aria-hidden="true">&#x1F4DA;</span>Libreria</button>
+          <button type="button" class="fm-config__chip" data-category="tavolo"   aria-pressed="false"><span class="fm-config__chip-icon" aria-hidden="true">&#x1FA91;</span>Tavolo</button>
+          <button type="button" class="fm-config__chip" data-category="porta"    aria-pressed="false"><span class="fm-config__chip-icon" aria-hidden="true">&#x1F6AA;</span>Porta</button>
+          <button type="button" class="fm-config__chip" data-category="armadio"  aria-pressed="false"><span class="fm-config__chip-icon" aria-hidden="true">&#x1F6CF;</span>Armadio</button>
+        </div>
+      </div>
+
+      <div>
+        <span class="fm-config__group-label">Essenza</span>
+        <div class="fm-config__swatches" role="group" aria-label="Tono del legno">
+          <button type="button" class="fm-config__swatch" data-wood="chiaro" aria-pressed="false">
+            <span class="fm-config__swatch-dot fm-config__swatch-dot--chiaro" aria-hidden="true"></span>
+            <span class="fm-config__swatch-text">
+              <span class="fm-config__swatch-name">Chiaro</span>
+              <span class="fm-config__swatch-meta">frassino, pino</span>
+            </span>
+          </button>
+          <button type="button" class="fm-config__swatch" data-wood="medio" aria-pressed="true">
+            <span class="fm-config__swatch-dot fm-config__swatch-dot--medio" aria-hidden="true"></span>
+            <span class="fm-config__swatch-text">
+              <span class="fm-config__swatch-name">Medio</span>
+              <span class="fm-config__swatch-meta">rovere, ciliegio</span>
+            </span>
+          </button>
+          <button type="button" class="fm-config__swatch" data-wood="scuro" aria-pressed="false">
+            <span class="fm-config__swatch-dot fm-config__swatch-dot--scuro" aria-hidden="true"></span>
+            <span class="fm-config__swatch-text">
+              <span class="fm-config__swatch-name">Scuro</span>
+              <span class="fm-config__swatch-meta">noce</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div class="fm-config__badge" id="fmBadge" aria-live="polite">Cucina &middot; Legno Medio &middot; Rovere</div>
+
+      <a href="#contatti" class="fm-config__cta">
+        Richiedi preventivo per questo pezzo
+        <span class="fm-config__cta-arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+
+    <div class="fm-config__stage">
+      <div class="fm-config__frame">
+        <img class="fm-config__img" id="fmImg" alt="">
+        <div class="fm-config__overlay" id="fmOverlay">Cucina &middot; Rovere</div>
+      </div>
+      <p class="fm-config__desc" id="fmDesc"></p>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function () {
+  var DATA = {
+    cucina: {
+      label: 'Cucina',
+      chiaro: { wood: 'Frassino', img: 'https://picsum.photos/seed/manzini-cucina-chiaro/1200/900',  desc: 'Cucina in frassino: luce che scorre tra piani lisci e maniglie a gola.' },
+      medio:  { wood: 'Rovere',   img: 'https://picsum.photos/seed/manzini-cucina-medio/1200/900',   desc: 'Cucina in rovere: venature calde, ante a filo, cerniere nascoste.' },
+      scuro:  { wood: 'Noce',     img: 'https://picsum.photos/seed/manzini-cucina-scuro/1200/900',   desc: 'Cucina in noce: toni profondi, top in pietra, atmosfera di casa italiana.' }
+    },
+    libreria: {
+      label: 'Libreria',
+      chiaro: { wood: 'Frassino', img: 'https://picsum.photos/seed/manzini-libreria-chiaro/1200/900', desc: 'Libreria in frassino: ripiani sottili, struttura leggera, i libri in primo piano.' },
+      medio:  { wood: 'Rovere',   img: 'https://picsum.photos/seed/manzini-libreria-medio/1200/900',  desc: 'Libreria in rovere: solidit\u00E0 e calore, incastri a vista, fatta per durare.' },
+      scuro:  { wood: 'Noce',     img: 'https://picsum.photos/seed/manzini-libreria-scuro/1200/900',  desc: 'Libreria in noce: parete scura, presenza piena, un piccolo studio da romanzo.' }
+    },
+    tavolo: {
+      label: 'Tavolo',
+      chiaro: { wood: 'Frassino', img: 'https://picsum.photos/seed/manzini-tavolo-chiaro/1200/900', desc: 'Tavolo in frassino: piano chiaro, gambe affusolate, un invito a sedersi.' },
+      medio:  { wood: 'Rovere',   img: 'https://picsum.photos/seed/manzini-tavolo-medio/1200/900',  desc: 'Tavolo in rovere: piano massello, bordo smussato a mano, misura su richiesta.' },
+      scuro:  { wood: 'Noce',     img: 'https://picsum.photos/seed/manzini-tavolo-scuro/1200/900',  desc: 'Tavolo in noce: venatura importante, cere naturali, il pezzo di una vita.' }
+    },
+    porta: {
+      label: 'Porta',
+      chiaro: { wood: 'Frassino', img: 'https://picsum.photos/seed/manzini-porta-chiaro/1200/900', desc: 'Porta in frassino: filo muro, maniglia minimal, luce che passa tra le stanze.' },
+      medio:  { wood: 'Rovere',   img: 'https://picsum.photos/seed/manzini-porta-medio/1200/900',  desc: 'Porta in rovere: telaio a scomparsa, pannello unico, apertura silenziosa.' },
+      scuro:  { wood: 'Noce',     img: 'https://picsum.photos/seed/manzini-porta-scuro/1200/900',  desc: 'Porta in noce: carattere deciso, battute precise, un ingresso che si ricorda.' }
+    },
+    armadio: {
+      label: 'Armadio',
+      chiaro: { wood: 'Frassino', img: 'https://picsum.photos/seed/manzini-armadio-chiaro/1200/900', desc: 'Armadio in frassino: ante alte fino al soffitto, interni in tessuto naturale.' },
+      medio:  { wood: 'Rovere',   img: 'https://picsum.photos/seed/manzini-armadio-medio/1200/900',  desc: 'Armadio in rovere: su misura fino al millimetro, cassetti a scorrimento lento.' },
+      scuro:  { wood: 'Noce',     img: 'https://picsum.photos/seed/manzini-armadio-scuro/1200/900',  desc: 'Armadio in noce: presenza raccolta, specchio integrato, camera di riguardo.' }
+    }
+  };
+
+  var WOOD_LABELS = {
+    chiaro: 'Legno Chiaro',
+    medio:  'Legno Medio',
+    scuro:  'Legno Scuro'
+  };
+
+  var state = { category: 'cucina', wood: 'medio' };
+
+  var chips     = document.querySelectorAll('.fm-config__chip');
+  var swatches  = document.querySelectorAll('.fm-config__swatch');
+  var badge     = document.getElementById('fmBadge');
+  var imgEl     = document.getElementById('fmImg');
+  var overlayEl = document.getElementById('fmOverlay');
+  var descEl    = document.getElementById('fmDesc');
+
+  // Precarica tutte le immagini al mount
+  Object.keys(DATA).forEach(function (cat) {
+    ['chiaro', 'medio', 'scuro'].forEach(function (w) {
+      var pre = new Image();
+      pre.src = DATA[cat][w].img;
+    });
+  });
+
+  function currentItem() {
+    return DATA[state.category][state.wood];
+  }
+
+  function updateAriaPressed() {
+    chips.forEach(function (c) {
+      c.setAttribute('aria-pressed', c.dataset.category === state.category ? 'true' : 'false');
+    });
+    swatches.forEach(function (s) {
+      s.setAttribute('aria-pressed', s.dataset.wood === state.wood ? 'true' : 'false');
+    });
+  }
+
+  function render(initial) {
+    var cat  = DATA[state.category];
+    var item = currentItem();
+    var altText = cat.label + ' in ' + item.wood + ' — render in ambiente';
+
+    // Badge
+    badge.textContent = cat.label + ' \u00B7 ' + WOOD_LABELS[state.wood] + ' \u00B7 ' + item.wood;
+    if (!initial) {
+      badge.classList.remove('is-pulse');
+      void badge.offsetWidth; // restart animation
+      badge.classList.add('is-pulse');
+    }
+
+    // Overlay
+    overlayEl.textContent = cat.label + ' \u00B7 ' + item.wood;
+
+    // Image cross-fade
+    if (initial) {
+      imgEl.src = item.img;
+      imgEl.alt = altText;
+      // avvio visibile al primo paint
+      requestAnimationFrame(function () { imgEl.classList.add('is-visible'); });
+    } else {
+      imgEl.classList.remove('is-visible');
+      setTimeout(function () {
+        imgEl.src = item.img;
+        imgEl.alt = altText;
+        requestAnimationFrame(function () { imgEl.classList.add('is-visible'); });
+      }, 400);
+    }
+
+    // Desc fade
+    if (initial) {
+      descEl.textContent = item.desc;
+    } else {
+      descEl.classList.add('is-fading');
+      setTimeout(function () {
+        descEl.textContent = item.desc;
+        descEl.classList.remove('is-fading');
+      }, 200);
+    }
+
+    updateAriaPressed();
+  }
+
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      if (state.category === chip.dataset.category) return;
+      state.category = chip.dataset.category;
+      render(false);
+    });
+  });
+
+  swatches.forEach(function (sw) {
+    sw.addEventListener('click', function () {
+      if (state.wood === sw.dataset.wood) return;
+      state.wood = sw.dataset.wood;
+      render(false);
+    });
+  });
+
+  render(true);
+})();
+</script>
+
+</body>
+</html>
