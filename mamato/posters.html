@@ -7,373 +7,199 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
 :root{
-  --noche:#140A1F;   /* base notte */
-  --uva:#3A1350;     /* viola profondo */
-  --fuego:#FF3B2F;   /* rosso fuoco */
-  --mango:#FFB21E;   /* giallo mango */
-  --flamingo:#FF4FA3;/* rosa neon */
-  --caribe:#13C9B8;  /* turchese caraibico */
-  --cal:#FFF1DC;     /* bianco calce */
+  --nero:#0D0608;     /* fondo */
+  --rosso:#E01E37;    /* rosso Mamatò (insegna, scritte a mano) */
+  --magenta:#FF2E88;  /* neon della serra */
+  --senape:#F2B33D;   /* oro del logo */
+  --crema:#FFF1DC;    /* carta, titoli */
+  --brace:#FF6A2B;    /* luci calde */
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#0b0610;display:flex;flex-wrap:wrap;gap:40px;padding:40px;align-items:flex-start}
-.board{position:relative;width:1080px;overflow:hidden;background:var(--noche);color:var(--cal);font-family:'Space Grotesk',sans-serif}
+body{background:#222;display:flex;flex-wrap:wrap;gap:40px;padding:40px;align-items:flex-start}
+.board{position:relative;width:1080px;overflow:hidden;background:var(--nero);color:var(--crema);font-family:'Montserrat',sans-serif}
 .board.feed{height:1350px}
 .board.story{height:1920px}
-.layer{position:absolute;inset:0}
 .abs{position:absolute}
+.layer{position:absolute;inset:0;pointer-events:none}
 
-/* ── Header ── */
-.logo{display:flex;align-items:center;gap:14px}
-.logo .mark{font-family:'Bungee';font-size:44px;line-height:1;color:var(--noche);background:var(--cal);padding:12px 18px 8px;border-radius:10px;box-shadow:6px 6px 0 var(--fuego)}
-.logo .pres{font-family:'Yellowtail';font-size:40px;color:var(--cal)}
-.loc{font-family:'Bungee';font-size:22px;letter-spacing:2px;color:var(--mango);text-align:right;line-height:1.25}
+.tracked{font-weight:500;letter-spacing:10px;text-transform:uppercase;font-size:20px;text-align:center}
+.hand{font-family:'Permanent Marker';color:var(--rosso);line-height:1.05;text-transform:uppercase}
+.brush{font-family:'Knewave';line-height:.9;white-space:nowrap;filter:url(#brush)}
+.title-shadow{filter:drop-shadow(0 8px 0 rgba(0,0,0,.55)) drop-shadow(0 0 40px rgba(224,30,55,.45))}
 
-/* ── Titolo ── */
-.script{font-family:'Yellowtail';color:#fff;line-height:1;
-  text-shadow:0 0 6px var(--flamingo),0 0 18px var(--flamingo),0 0 42px var(--flamingo),0 0 80px rgba(255,79,163,.6)}
-.mega{font-family:'Anton';line-height:.86;letter-spacing:2px;text-transform:uppercase;position:relative;white-space:nowrap}
-.mega .face{position:relative;background:linear-gradient(180deg,#FFE27A 0%,var(--mango) 38%,var(--fuego) 78%,#C2152F 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:3px var(--noche)}
-.mega .depth{position:absolute;left:0;top:0;color:var(--uva);-webkit-text-stroke:3px var(--noche);
-  text-shadow:2px 2px 0 var(--uva),4px 4px 0 var(--uva),6px 6px 0 var(--uva),8px 8px 0 var(--uva),10px 10px 0 var(--uva),12px 12px 0 var(--uva),14px 14px 0 #0b0610,16px 16px 0 #0b0610;}
+.paper{background:var(--crema);color:var(--nero);box-shadow:0 18px 30px rgba(0,0,0,.55)}
+.paper::after{content:"";position:absolute;inset:0;background:url(#);mix-blend-mode:multiply}
+.note{font-size:32px;color:var(--crema);text-shadow:0 0 14px #000,0 0 4px #000}
+.tape{background:var(--rosso);color:var(--crema)}
 
-/* ── Cinta (nastro generi) ── */
-.cinta{left:-60px;right:-60px;height:78px;display:flex;align-items:center;justify-content:center;gap:20px;
-  font-family:'Bungee';font-size:28px;letter-spacing:1px;color:var(--noche);white-space:nowrap;
-  background:var(--caribe);border-top:4px solid var(--noche);border-bottom:4px solid var(--noche);
-  box-shadow:0 10px 0 rgba(0,0,0,.35)}
-.cinta .st{color:var(--cal);font-size:26px}
-.cinta.alt{background:var(--mango)}
-
-/* ── Data / biglietto ── */
-.ticket{display:flex;align-items:stretch;filter:drop-shadow(0 12px 0 rgba(0,0,0,.4))}
-.ticket .d{background:var(--cal);color:var(--noche);padding:14px 30px 10px;border-radius:12px 0 0 12px;display:flex;align-items:baseline;gap:16px;
-  -webkit-mask:radial-gradient(circle 12px at 100% 50%,transparent 11px,#000 12px)}
-.ticket .d .wd{font-family:'Bungee';font-size:30px;color:var(--fuego)}
-.ticket .d .n{font-family:'Anton';font-size:92px;line-height:.95}
-.ticket .d .m{font-family:'Anton';font-size:60px;line-height:1;letter-spacing:1px}
-.ticket .t{background:var(--fuego);color:var(--cal);padding:10px 28px;border-radius:0 12px 12px 0;border-left:4px dashed var(--noche);
-  display:flex;flex-direction:column;justify-content:center;align-items:center}
-.ticket .t .h{font-family:'Bungee';font-size:22px;letter-spacing:2px}
-.ticket .t .hh{font-family:'Anton';font-size:76px;line-height:1}
-
-/* ── Rótulo (insegna dipinta) ── */
-.rotulo{background:var(--noche);border:5px solid var(--mango);border-radius:16px;padding:16px 34px 14px;text-align:center;
-  box-shadow:0 0 0 5px var(--noche),0 0 0 9px var(--flamingo),0 0 40px rgba(255,79,163,.55)}
-.rotulo .k{font-family:'Bungee';font-size:20px;letter-spacing:5px;color:var(--caribe)}
-.rotulo .a{font-family:'Anton';font-size:66px;line-height:1.05;letter-spacing:2px;color:var(--cal)}
-.rotulo .a i{font-style:normal;color:var(--flamingo);padding:0 .25em}
-
-/* ── Footer ── */
-.foot{left:0;right:0;padding:0 60px;text-align:center}
-.foot .pre{white-space:nowrap;font-size:24px;font-weight:500;letter-spacing:.5px;color:var(--cal)}
-.foot .pre b{font-weight:700;color:var(--mango)}
-.foot .book{font-family:'Bungee';font-size:38px;color:var(--noche);background:var(--mango);display:inline-block;padding:12px 26px 8px;border-radius:10px;margin:14px 0 12px;box-shadow:6px 6px 0 var(--fuego)}
-.foot .book span{color:var(--fuego)}
-.foot .addr{font-size:22px;font-weight:500;letter-spacing:2px;text-transform:uppercase;opacity:.9}
-
-.grain{mix-blend-mode:overlay;opacity:.35;pointer-events:none}
+.foot{left:0;right:0;text-align:center}
+.foot .logo{height:66px;display:block;margin:0 auto}
+.foot .tag{font-family:'Josefin Sans';font-weight:700;letter-spacing:7px;font-size:17px;color:var(--senape);margin-top:8px}
+.foot .book{font-weight:800;font-size:31px;letter-spacing:2px;margin-top:20px}
+.foot .book span{color:var(--senape)}
+.foot .addr{font-weight:500;font-size:16px;letter-spacing:6px;margin-top:10px;opacity:.85}
+.grain{mix-blend-mode:overlay;opacity:.45}
 </style>
 </head>
 <body>
+<!-- filtri condivisi: pennello secco e bordo ruvido -->
+<svg width="0" height="0" style="position:absolute">
+  <filter id="brush" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".04 .09" numOctaves="2" seed="4" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="8" xChannelSelector="R" yChannelSelector="G" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".01 .16" numOctaves="3" seed="9" result="s"/>
+    <feColorMatrix in="s" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -16 0 0 0 11.4" result="m"/>
+    <feComposite in="d" in2="m" operator="in"/>
+  </filter>
+  <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="2"/><feDisplacementMap in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>
+  <filter id="paperTex"><feTurbulence type="fractalNoise" baseFrequency=".6" numOctaves="3" seed="5"/><feColorMatrix type="matrix" values="0 0 0 0 .55  0 0 0 0 .45  0 0 0 0 .35  0 0 -1.4 0 .9"/></filter>
+</svg>
+
 <div class="board feed"  id="fuego-feed"></div>
 <div class="board feed"  id="cena-feed"></div>
 <div class="board story" id="fuego-story"></div>
 <div class="board story" id="cena-story"></div>
 
 <script>
-// ---------- utilità ----------
 let seed = 7;
 const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 const W = 1080;
 
-const DEFS = `
-<defs>
-  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-    <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-  </filter>
-  <filter id="bigglow" x="-50%" y="-50%" width="200%" height="200%">
-    <feGaussianBlur stdDeviation="22"/>
-  </filter>
-  <filter id="noise"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter>
-  <!-- rejas: grata in ferro battuto delle casitas -->
-  <pattern id="reja" width="40" height="40" patternUnits="userSpaceOnUse">
-    <path d="M0 20 L20 0 L40 20 L20 40 Z" fill="none" stroke="#1a0d22" stroke-width="3"/>
-    <circle cx="20" cy="20" r="6" fill="none" stroke="#1a0d22" stroke-width="3"/>
-  </pattern>
-  <pattern id="rejaLight" width="40" height="40" patternUnits="userSpaceOnUse">
-    <path d="M0 20 L20 0 L40 20 L20 40 Z" fill="none" stroke="#FFF1DC" stroke-width="3"/>
-    <circle cx="20" cy="20" r="6" fill="none" stroke="#FFF1DC" stroke-width="3"/>
-  </pattern>
-  <!-- losetas: piastrelle a pavimento -->
-  <pattern id="loseta" width="60" height="60" patternUnits="userSpaceOnUse">
-    <rect width="60" height="60" fill="#FFF1DC"/>
-    <path d="M30 0 L60 30 L30 60 L0 30Z" fill="#13C9B8"/>
-    <path d="M30 12 L48 30 L30 48 L12 30Z" fill="#FF3B2F"/>
-    <circle cx="30" cy="30" r="6" fill="#FFB21E"/>
-    <path d="M0 0h8L0 8zM60 0h-8l8 8zM0 60h8l-8-8zM60 60h-8l8-8z" fill="#3A1350"/>
-  </pattern>
-  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#140A1F"/><stop offset=".45" stop-color="#2A0E3A"/>
-    <stop offset=".72" stop-color="#7A1A55"/><stop offset=".9" stop-color="#E0453A"/><stop offset="1" stop-color="#FF8A2A"/>
-  </linearGradient>
-  <linearGradient id="street" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#2a1030"/><stop offset="1" stop-color="#0b0610"/>
-  </linearGradient>
-  <linearGradient id="footShade" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#140A1F" stop-opacity="0"/><stop offset=".35" stop-color="#140A1F" stop-opacity=".88"/><stop offset="1" stop-color="#140A1F"/>
-  </linearGradient>
-  <radialGradient id="spot" cx=".5" cy="0" r="1">
-    <stop offset="0" stop-color="#FFE9B0" stop-opacity=".55"/><stop offset="1" stop-color="#FFE9B0" stop-opacity="0"/>
-  </radialGradient>
-  <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0" stop-color="#6b6b7a"/><stop offset=".35" stop-color="#f4f4f8"/><stop offset=".6" stop-color="#9a9aa8"/><stop offset="1" stop-color="#3b3b48"/>
-  </linearGradient>
-</defs>`;
+// ---------- elementi grafici ricorrenti ----------
+// bordo strappato: clip-path con margini frastagliati
+function tornClip(depth = 2.2, step = 2.5) {
+  const pts = [];
+  for (let x = 0; x <= 100; x += step) pts.push(`${x}% ${rnd() * depth}%`);
+  for (let y = 0; y <= 100; y += step * 2) pts.push(`${100 - rnd() * depth * .5}% ${y}%`);
+  for (let x = 100; x >= 0; x -= step) pts.push(`${x}% ${100 - rnd() * depth}%`);
+  for (let y = 100; y >= 0; y -= step * 2) pts.push(`${rnd() * depth * .5}% ${y}%`);
+  return `clip-path:polygon(${pts.join(',')})`;
+}
+const paperTex = `<svg class="layer" width="100%" height="100%"><rect width="100%" height="100%" filter="url(#paperTex)"/></svg>`;
 
-// palma in silhouette
-function palm(x, base, h, lean, s = 1, col = '#0b0610') {
+// corona disegnata a mano (motivo ricorrente delle grafiche Mamatò)
+const crown = (w, col = 'var(--crema)', sw = 7) => `<svg width="${w}" height="${w * .62}" viewBox="0 0 100 62" style="overflow:visible;filter:url(#rough)">
+  <path d="M8 50 L4 12 L28 34 L48 4 L68 33 L94 10 L90 50 Z" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M10 58 Q50 52 90 58" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linecap="round"/></svg>`;
+const heart = (w, col = 'var(--rosso)') => `<svg width="${w}" height="${w}" viewBox="0 0 40 40" style="filter:url(#rough);vertical-align:middle">
+  <path d="M20 34 C4 22 2 12 9 7 C14 4 19 8 20 13 C21 8 27 3 32 7 C39 13 34 23 20 34Z" fill="none" stroke="${col}" stroke-width="3.5" stroke-linejoin="round"/></svg>`;
+
+// microfono disegnato a mano
+function micDoodle(w) {
+  const c = 'var(--crema)';
+  let grid = '';
+  for (let i = 0; i < 6; i++) grid += `<path d="M${30 + i * 14} 22 Q${44 + i * 10} 70 ${36 + i * 12} 118" stroke="${c}" stroke-width="3" fill="none" opacity=".8"/>`;
+  for (let i = 0; i < 5; i++) grid += `<path d="M24 ${40 + i * 18} Q70 ${32 + i * 18} 116 ${42 + i * 18}" stroke="${c}" stroke-width="3" fill="none" opacity=".8"/>`;
+  return `<svg width="${w}" height="${w * 2.3}" viewBox="0 0 140 322" style="overflow:visible;filter:url(#rough)">
+    <ellipse cx="70" cy="70" rx="52" ry="58" fill="rgba(13,6,8,.55)" stroke="${c}" stroke-width="7"/>${grid}
+    <path d="M30 122 Q70 138 110 122" stroke="var(--rosso)" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <path d="M36 132 L54 300 Q70 312 86 300 L104 132" fill="rgba(13,6,8,.55)" stroke="${c}" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M58 200 h24" stroke="var(--senape)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M70 306 Q60 340 20 330 Q-30 316 -40 360" stroke="${c}" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <g stroke="var(--senape)" stroke-width="6" fill="none" stroke-linecap="round">
+      <path d="M140 20 q14 -10 22 -24"/><path d="M150 52 q18 -2 30 -12"/><path d="M146 86 q18 6 30 2"/></g>
+  </svg>`;
+}
+
+// palma in silhouette per gli angoli
+function palm(x, base, h, lean, s, col) {
   const tx = x + lean, ty = base - h;
-  let g = `<path d="M${x} ${base} Q${x + lean * .2} ${base - h * .55} ${tx} ${ty}" stroke="${col}" stroke-width="${20 * s}" fill="none" stroke-linecap="round"/>`;
-  for (let i = 0; i < 6; i++) { // anelli del tronco
-    const t = .15 + i * .14, px = x + (tx - x) * t * t, py = base - h * t;
-    g += `<path d="M${px - 12 * s} ${py} q${12 * s} ${-6 * s} ${24 * s} 0" stroke="#2a1030" stroke-width="2" fill="none"/>`;
-  }
-  const angs = [-170, -140, -110, -70, -40, -10, 20, 160, -95];
-  angs.forEach(a => {
-    const r = (a * Math.PI) / 180, L = (120 + rnd() * 50) * s;
+  let g = `<path d="M${x} ${base} Q${x + lean * .2} ${base - h * .55} ${tx} ${ty}" stroke="${col}" stroke-width="${22 * s}" fill="none" stroke-linecap="round"/>`;
+  [-175, -150, -120, -80, -45, -15, 15, 160, -100, 40].forEach(a => {
+    const r = a * Math.PI / 180, L = (140 + rnd() * 70) * s;
     const ex = tx + Math.cos(r) * L, ey = ty + Math.sin(r) * L * .6 + L * .45;
     const cx = tx + Math.cos(r) * L * .55, cy = ty + Math.sin(r) * L * .6 - 30 * s;
-    const nx = -Math.sin(r) * 16 * s, ny = Math.cos(r) * 16 * s;
+    const nx = -Math.sin(r) * 18 * s, ny = Math.cos(r) * 18 * s;
     g += `<path d="M${tx} ${ty} Q${cx + nx} ${cy + ny} ${ex} ${ey} Q${cx - nx} ${cy - ny} ${tx} ${ty}Z" fill="${col}"/>`;
   });
   return g;
 }
+const palms = (H, col) => `<svg class="layer" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+  ${palm(-60, H * .62, 520, 110, 1.2, col)}${palm(1140, H * .58, 500, -120, 1.15, col)}</svg>`;
 
-// filo di lampadine
-function bulbs(x1, y1, x2, y2, sag, n, col = '#FFD27A') {
-  const cx = (x1 + x2) / 2, cy = Math.max(y1, y2) + sag;
-  let g = `<path d="M${x1} ${y1} Q${cx} ${cy} ${x2} ${y2}" stroke="#0b0610" stroke-width="3" fill="none"/>`;
-  for (let i = 1; i < n; i++) {
-    const t = i / n, bx = (1 - t) ** 2 * x1 + 2 * (1 - t) * t * cx + t * t * x2, by = (1 - t) ** 2 * y1 + 2 * (1 - t) * t * cy + t * t * y2;
-    const c = [col, '#FF4FA3', '#13C9B8', '#FFB21E'][i % 4];
-    g += `<circle cx="${bx}" cy="${by + 9}" r="16" fill="${c}" opacity=".35" filter="url(#bigglow)"/><circle cx="${bx}" cy="${by + 9}" r="7" fill="${c}"/>`;
-  }
-  return g;
+function grain(H) {
+  return `<svg class="layer grain" width="${W}" height="${H}"><filter id="g${H}"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#g${H})"/></svg>`;
+}
+// bordo consumato, effetto poster stampato
+const vignette = `<div class="layer" style="box-shadow:inset 0 0 120px 30px rgba(0,0,0,.85)"></div>`;
+
+function footer(bottom, handLine) {
+  return `<div class="abs foot" style="bottom:${bottom}px">
+    <div class="hand" style="font-size:27px;margin-bottom:22px;text-transform:none">${handLine}</div>
+    <img class="logo" src="assets/logo-crema.png">
+    <div class="tag">DRINKS FOOD AND AMORE</div>
+    <div class="book">PRENOTA IL TUO TAVOLO · <span>0522 1900196</span></div>
+    <div class="addr">VIA G. GALILEI, 13 · ZONA RAME · REGGIOLO (RE)</div></div>`;
 }
 
-// casita portoricana: tetto piano, tinaco, rejas, insegna
-function casita(x, w, h, G, body, trim, sign) {
-  const top = G - h;
-  let g = `<rect x="${x}" y="${top}" width="${w}" height="${h}" fill="${body}"/>
-  <rect x="${x - 6}" y="${top - 16}" width="${w + 12}" height="20" fill="${trim}"/>
-  <rect x="${x}" y="${top + 4}" width="${w}" height="${h}" fill="url(#reja)" opacity="0"/>`;
-  // tinaco (serbatoio d'acqua) sul tetto
-  if (w > 200) g += `<rect x="${x + w * .65}" y="${top - 70}" width="52" height="54" rx="8" fill="#0b0610"/><rect x="${x + w * .65 - 4}" y="${top - 74}" width="60" height="10" rx="4" fill="#0b0610"/>`;
-  // finestre con rejas
-  const winW = Math.min(90, w * .32), winH = 100, wy = top + 56;
-  [x + 26, x + w - 26 - winW].forEach((wx, i) => {
-    const lit = i === 0 || rnd() > .4;
-    g += `<rect x="${wx}" y="${wy}" width="${winW}" height="${winH}" fill="${lit ? '#FFC867' : '#1a0d22'}"/>`;
-    if (lit) g += `<rect x="${wx - 10}" y="${wy - 10}" width="${winW + 20}" height="${winH + 20}" fill="#FFC867" opacity=".35" filter="url(#bigglow)"/>`;
-    g += `<rect x="${wx}" y="${wy}" width="${winW}" height="${winH}" fill="url(#reja)"/>
-      <rect x="${wx}" y="${wy}" width="${winW}" height="${winH}" fill="none" stroke="${trim}" stroke-width="7"/>`;
-  });
-  // porta
-  const dw = 70, dx = x + w / 2 - dw / 2;
-  g += `<rect x="${dx}" y="${G - 150}" width="${dw}" height="150" fill="#1a0d22" stroke="${trim}" stroke-width="7"/>
-        <rect x="${dx}" y="${G - 150}" width="${dw}" height="150" fill="url(#reja)" opacity=".8"/>`;
-  // insegna neon
-  if (sign) {
-    const sy = top + 200, fs = sign.size || 46;
-    g += `<text x="${x + w / 2}" y="${sy}" text-anchor="middle" font-family="${sign.font || 'Monoton'}" font-size="${fs}" fill="${sign.col}" filter="url(#glow)">${sign.t}</text>`;
-  }
-  return g;
+function dateCard(x, y, rot, time) {
+  return `<div class="abs paper" style="left:${x}px;top:${y}px;padding:26px 40px 24px;white-space:nowrap;transform:rotate(${rot}deg);${tornClip()}">
+    ${paperTex}
+    <div class="hand" style="font-size:30px;position:relative">venerdì</div>
+    <div style="font-family:Knewave;font-size:76px;line-height:.95;position:relative">30 OTTOBRE</div>
+    <div style="font-weight:800;font-size:30px;letter-spacing:3px;color:var(--rosso);position:relative;margin-top:6px">DALLE ${time}</div></div>`;
 }
-
-// sedia di plastica bianca (monobloc)
-function chair(x, y, s = 1, flip = false) {
-  return `<g transform="translate(${x} ${y}) scale(${flip ? -s : s} ${s})" fill="#F4EEE4" stroke="#0b0610" stroke-width="3">
-    <path d="M-38 -150 Q0 -170 38 -150 L34 -70 L-34 -70Z"/>
-    <path d="M-20 -140 h40 M-22 -120 h44 M-24 -100 h48" stroke="#b9b1a5" stroke-width="5"/>
-    <path d="M-46 -72 h92 l-6 16 h-80z"/>
-    <path d="M-40 -56 L-50 0 M40 -56 L50 0 M-30 -56 L-34 0 M30 -56 L34 0" stroke-width="9" stroke="#F4EEE4"/>
-  </g>`;
-}
-
-// persona in silhouette (braccia alzate, opz. microfono)
-function person(x, G, s = 1, arms = 'up', mic = false, col = '#0b0610') {
-  if (col !== '#0b0610') mic = false;
-  const head = G - 250 * s, sh = G - 200 * s;
-  let g = `<circle cx="${x}" cy="${head}" r="${30 * s}" fill="${col}"/>
-    <path d="M${x - 62 * s} ${G} Q${x - 66 * s} ${sh} ${x} ${sh - 8 * s} Q${x + 66 * s} ${sh} ${x + 62 * s} ${G}Z" fill="${col}"/>`;
-  const a = arms === 'up' ? [[-1, -100, -110], [1, 100, -110]] : arms === 'one' ? [[-1, -60, 10], [1, 95, -120]] : [[-1, -40, -90], [1, 40, -90]];
-  a.forEach(([sd, dx, dy]) => {
-    g += `<path d="M${x + sd * 48 * s} ${sh + 14 * s} Q${x + sd * 92 * s} ${sh - 20 * s} ${x + dx * s} ${sh + dy * s}" stroke="${col}" stroke-width="${30 * s}" stroke-linecap="round" fill="none"/>
-      <circle cx="${x + dx * s}" cy="${sh + dy * s}" r="${20 * s}" fill="${col}"/>`;
-  });
-  if (mic) g += `<circle cx="${x - 40 * s}" cy="${head - 6 * s}" r="${14 * s}" fill="#FFB21E"/><path d="M${x - 40 * s} ${head + 6 * s} L${x - 30 * s} ${head + 50 * s}" stroke="#FFB21E" stroke-width="${9 * s}" stroke-linecap="round"/>`;
-  return g;
-}
-
-// microfono vintage su asta
-function bigMic(x, y, s = 1) {
-  return `<g transform="translate(${x} ${y}) scale(${s}) rotate(-10)">
-    <rect x="-8" y="150" width="16" height="400" fill="url(#chrome)"/>
-    <path d="M-28 150 h56 l-10 -40 h-36z" fill="url(#chrome)"/>
-    <rect x="-70" y="-120" width="140" height="240" rx="70" fill="url(#chrome)" stroke="#0b0610" stroke-width="5"/>
-    ${Array.from({length: 11}, (_, i) => `<path d="M-62 ${-92 + i * 19} H62" stroke="#2b2b36" stroke-width="5"/>`).join('')}
-    <rect x="-74" y="-6" width="148" height="20" rx="6" fill="#FF3B2F" stroke="#0b0610" stroke-width="4"/>
-    <text x="0" y="10" text-anchor="middle" font-family="Bungee" font-size="14" fill="#FFF1DC">MAMATÒ</text>
-  </g>`;
-}
-
-// ---------- scene ----------
-function sceneFuego(H, story) {
-  seed = 11;
-  const G = H - (story ? 470 : 260);
-  let s = `<rect width="${W}" height="${H}" fill="url(#sky)"/>`;
-  // sole/luna caraibica al tramonto
-  s += `<circle cx="540" cy="${G - 360}" r="250" fill="#FF6A3D" opacity=".55" filter="url(#bigglow)"/>
-        <circle cx="540" cy="${G - 360}" r="200" fill="#FF8A3D" opacity=".85"/>`;
-  for (let i = 0; i < 6; i++) s += `<rect x="300" y="${G - 300 + i * 26}" width="480" height="${4 + i * 2}" fill="#7A1A55" opacity=".9"/>`;
-  // palme lontane
-  s += palm(70, G - 120, 520, 60, 1.05, '#2a0e3a') + palm(1010, G - 120, 560, -80, 1.1, '#2a0e3a');
-  // casitas
-  const houses = [
-    [-40, 250, 330, '#B8326E', '#FF4FA3', null],
-    [210, 230, 280, '#13897F', '#13C9B8', null],
-    [440, 220, 360, '#D98A15', '#FFB21E', null],
-    [660, 210, 300, '#5A2C8C', '#9C6BFF', null],
-    [870, 250, 340, '#C23A2C', '#FF6A4D', null],
-  ];
-  houses.forEach(([x, w, h, b, t, sign]) => s += casita(x, w, h, G, b, t, sign));
-  // strada bagnata con riflessi
-  s += `<rect x="0" y="${G}" width="${W}" height="${H - G}" fill="url(#street)"/>`;
-  [['#FF4FA3', 120], ['#13C9B8', 330], ['#FFB21E', 550], ['#FF3B2F', 980]].forEach(([c, x]) =>
-    s += `<rect x="${x - 40}" y="${G + 10}" width="80" height="${H - G}" fill="${c}" opacity=".18" filter="url(#bigglow)"/>`);
-  // palme in primo piano
-  s += palm(-20, H, H - G + 640, 120, 1.5) + palm(1110, H, H - G + 600, -140, 1.45);
-  // lampadine sopra la strada
-  s += bulbs(-20, G - 470, 1100, G - 470, 110, 14);
-  s += blade(44, G - 360, 'PERREO', '#FF4FA3') + blade(966, G - 360, 'DEMBOW', '#13C9B8');
-  s += `<rect y="${G - 60}" width="${W}" height="${H - G + 60}" fill="url(#footShade)"/>`;
-  return s;
-}
-
-// insegna verticale a bandiera, al neon
-function blade(x, y, word, col) {
-  let g = `<rect x="${x}" y="${y}" width="70" height="${word.length * 52 + 30}" rx="10" fill="#140A1F" stroke="${col}" stroke-width="4" filter="url(#glow)"/>`;
-  [...word].forEach((c, i) => g += `<text x="${x + 35}" y="${y + 60 + i * 52}" text-anchor="middle" font-family="Monoton" font-size="44" fill="${col}" filter="url(#glow)">${c}</text>`);
-  return g;
-}
-
-function sceneCena(H, story) {
-  seed = 23;
-  const G = H - (story ? 470 : 260);
-  // parete della casita: intonaco turchese, zoccolo di losetas
-  let s = `<rect width="${W}" height="${H}" fill="#2A0E3A"/>
-    <rect y="${G - 560}" width="${W}" height="560" fill="#13897F"/>
-    <rect y="${G - 170}" width="${W}" height="170" fill="url(#loseta)"/>
-    <rect y="${G - 176}" width="${W}" height="10" fill="#FFB21E"/>`;
-  // finestra con rejas sulla notte caraibica, dietro al microfono
-  const fx = 770, fy = G - 430, fw = 250, fh = 250;
-  s += `<rect x="${fx}" y="${fy}" width="${fw}" height="${fh}" fill="#3A1350"/>
-    <circle cx="${fx + 70}" cy="${fy + 80}" r="44" fill="#FF8A3D"/>
-    ${palm(fx + 190, fy + fh + 30, 210, -30, .5, '#140A1F')}
-    <rect x="${fx}" y="${fy}" width="${fw}" height="${fh}" fill="url(#rejaLight)"/>
-    <rect x="${fx}" y="${fy}" width="${fw}" height="${fh}" fill="none" stroke="#FF4FA3" stroke-width="12"/>`;
-  // cono di luce sul microfono
-  s += `<path d="M900 0 L600 ${G} L1080 ${G} L1080 0Z" fill="url(#spot)"/>`;
-  s += `<rect y="${G}" width="${W}" height="${H - G}" fill="#1a0d22"/>`;
-  // lampadine dal soffitto
-  s += bulbs(-20, G - 640, 1100, G - 660, 130, 14);
-  // microfono protagonista, l'asta finisce dietro la tavolata
-  s += bigMic(860, G - 330, 1.15);
-  // tavolata con piatti e bottiglie
-  const ty = G - 40;
-  s += `<rect x="470" y="${ty}" width="560" height="24" rx="6" fill="#FFF1DC" stroke="#0b0610" stroke-width="3"/>
-    <rect x="470" y="${ty + 24}" width="560" height="44" fill="#FF3B2F" stroke="#0b0610" stroke-width="3"/>
-    ${[530, 650, 890, 990].map(px => `<ellipse cx="${px}" cy="${ty - 4}" rx="42" ry="11" fill="#fff" stroke="#0b0610" stroke-width="3"/>`).join('')}
-    <rect x="590" y="${ty - 74}" width="22" height="70" rx="6" fill="#13C9B8" stroke="#0b0610" stroke-width="3"/>
-    <rect x="950" y="${ty - 60}" width="18" height="56" rx="5" fill="#FFB21E" stroke="#0b0610" stroke-width="3"/>`;
-  s += chair(500, G + 80, .95) + chair(1010, G + 80, .95, true);
-  // gente che canta e balla
-  const rim = (x, g, sc, arms, mic) => `<g transform="translate(-5 -4)">${person(x, g, sc, arms, false, '#FF4FA3')}</g>` + person(x, g, sc, arms, mic);
-  s += rim(140, H - 10, 1.0, 'up', false) + rim(330, H + 10, 1.1, 'one', true) + rim(800, H + 20, 1.0, 'one', true);
-  s += `<rect y="${G - 40}" width="${W}" height="${H - G + 40}" fill="url(#footShade)" opacity=".8"/>`;
-  return s;
+function tape(x, y, rot, kicker, main, sub) {
+  return `<div class="abs tape" style="left:${x}px;top:${y}px;padding:22px 40px 22px;transform:rotate(${rot}deg);${tornClip(4, 3)};box-shadow:0 18px 30px rgba(0,0,0,.5)">
+    <div class="tracked" style="font-size:17px;letter-spacing:8px;font-weight:700">${kicker}</div>
+    <div style="font-family:Knewave;font-size:58px;line-height:1.05;text-align:center;white-space:nowrap">${main}</div>
+    ${sub ? `<div style="font-family:Knewave;font-size:42px;line-height:1;text-align:center;white-space:nowrap">${sub}</div>` : ''}</div>`;
 }
 
 // ---------- composizione ----------
-function svgLayer(H, inner) {
-  return `<svg class="layer" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${DEFS}${inner}</svg>`;
-}
-function frameLayer(H) {
-  // cornice ricorrente: banda con motivo rejas
-  return `<svg class="layer" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${DEFS}
-    <path fill-rule="evenodd" d="M0 0H${W}V${H}H0Z M26 26V${H - 26}H${W - 26}V26Z" fill="#140A1F"/>
-    <path fill-rule="evenodd" d="M0 0H${W}V${H}H0Z M26 26V${H - 26}H${W - 26}V26Z" fill="url(#rejaLight)" opacity=".18"/>
-    <rect x="26" y="26" width="${W - 52}" height="${H - 52}" fill="none" stroke="#FFB21E" stroke-width="4"/>
-    </svg>`;
-}
-function grainLayer(H) {
-  return `<svg class="layer grain" width="${W}" height="${H}"><rect width="100%" height="100%" filter="url(#n2)"/>
-    <defs><filter id="n2"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2"/><feColorMatrix type="saturate" values="0"/></filter></defs></svg>`;
-}
-
-function header(top) {
-  return `<div class="abs" style="left:62px;right:62px;top:${top}px;display:flex;justify-content:space-between;align-items:center">
-    <div class="logo"><div class="mark">MAMATÒ</div><div class="pres">presenta</div></div>
-    <div class="loc">REGGIOLO (RE)<br>ZONA RAME</div></div>`;
-}
-function ticket(time) {
-  return `<div class="ticket"><div class="d"><span class="wd">VEN</span><span class="n">30</span><span class="m">OTTOBRE</span></div>
-    <div class="t"><span class="h">DALLE</span><span class="hh">${time}</span></div></div>`;
-}
-function footer(H, pre) {
-  return `<div class="abs foot" style="bottom:${H > 1400 ? 250 : 58}px">
-    <div class="pre">${pre}</div>
-    <div class="book">PRENOTA IL TUO TAVOLO <span>0522 1900196</span></div>
-    <div class="addr">Via G. Galilei, 13 · Zona Rame · Reggiolo (RE)</div></div>`;
-}
-
 function build(id, kind) {
   const el = document.getElementById(id), H = el.offsetHeight, story = H > 1400;
-  // posizioni per formato (le stories rispettano le safe zone di 250px)
-  const L = story
-    ? {T: 250, title: 420, scr: 168, mega: 380, megaK: 300, cinta: 905, ticket: 1060, rot: 1235}
-    : {T: 66,  title: 186, scr: 150, mega: 330, megaK: 290, cinta: 611, ticket: 746, rot: 916};
-  let html = svgLayer(H, kind === 'fuego' ? sceneFuego(H, story) : sceneCena(H, story)) + header(L.T);
-  const titleBlock = (scr, word, size) => `<div class="abs" style="left:0;right:0;top:${L.title - 66}px;text-align:center">
-      <div class="script" style="font-size:${L.scr}px;transform:rotate(-7deg);margin-bottom:-${L.scr * .25}px;position:relative;z-index:2">${scr}</div>
-      <div class="mega" style="font-size:${size}px;display:inline-block"><span class="depth">${word}</span><span class="face">${word}</span></div></div>`;
+  const y = v => story ? (v < 560 ? v + 220 : v + 330) : v;   // il 9:16 rispetta le safe zone
+  const fb = story ? 250 : 46;
+  seed = kind === 'fuego' ? 11 : 29;
+  let h = '';
 
   if (kind === 'fuego') {
-    html += titleBlock('Mama che', 'FUEGO', L.mega);
-    html += `<div class="abs cinta" style="top:${L.cinta - 66}px;transform:rotate(-3.5deg)">
-      REGGAETON<span class="st">✦</span>LATIN HITS<span class="st">✦</span>DEMBOW<span class="st">✦</span>BRAZILIAN FUNK</div>`;
-    html += `<div class="abs" style="left:0;right:0;top:${L.ticket - 66}px;display:flex;justify-content:center">${ticket('23:30')}</div>`;
-    html += `<div class="abs" style="left:0;right:0;top:${L.rot - 66}px;display:flex;justify-content:center">
-      <div class="rotulo"><div class="k">ON STAGE</div><div class="a">AMISTA<i>✦</i>MARET THE VOICE</div></div></div>`;
-    html += footer(H, `Dalle <b>20:30</b> cena animata &amp; karaoke con <b>Berni Show</b> · cena alla carta`);
+    h += `<img class="abs" src="assets/facciata-fuego.jpg" style="left:-30px;top:${y(-30)}px;width:1140px">`;
+    h += `<div class="layer" style="background:linear-gradient(180deg,var(--nero) ${story ? 330 : 110}px,rgba(13,6,8,.25) ${y(470)}px,rgba(13,6,8,0) ${y(640)}px,rgba(13,6,8,.35) ${H - fb - 330}px,rgba(13,6,8,.92) ${H - fb - 210}px,var(--nero) ${H - fb - 120}px)"></div>`;
+    // la foto è di dicembre: si spegne l'albero di Natale a destra dell'ingresso
+    h += `<div class="abs" style="left:840px;top:${y(-30) + 900}px;width:320px;height:380px;background:radial-gradient(closest-side,rgba(13,6,8,.92),rgba(13,6,8,.75) 60%,rgba(13,6,8,0))"></div>`;
+    h += palms(H, '#2a0610');
+    h += `<div class="abs tracked" style="left:0;right:0;top:${y(48)}px">Mamatò presents</div>`;
+    h += `<div class="abs hand" style="left:150px;top:${y(96)}px;font-size:84px;color:var(--rosso);transform:rotate(-7deg);text-transform:none;z-index:2">Mama che</div>`;
+    h += `<div class="abs title-shadow" style="left:0;right:0;top:${y(150)}px;text-align:center">
+      <div class="brush" style="font-size:300px;color:var(--senape)">FUEGO</div></div>`;
+    h += `<div class="abs" style="left:742px;top:${y(105)}px;transform:rotate(12deg)">${crown(120, 'var(--crema)')}</div>`;
+    h += `<div class="abs hand" style="left:0;right:0;top:${y(455)}px;text-align:center;font-size:33px;transform:rotate(-2.5deg);color:var(--crema)">
+      Reggaeton <span style="color:var(--rosso)">/</span> Latin hits <span style="color:var(--rosso)">/</span> Dembow <span style="color:var(--rosso)">/</span> Brazilian funk</div>`;
+    h += `<div class="abs hand note" style="left:56px;top:${y(560)}px;transform:rotate(-8deg)">La fiesta<br>es aquí ${heart(30, 'var(--senape)')}</div>`;
+    h += `<div class="abs hand note" style="right:56px;top:${y(528)}px;text-align:right;transform:rotate(7deg)">Perreo<br>hasta el<br>amanecer ${heart(30, 'var(--senape)')}</div>`;
+    h += dateCard(56, y(712), -4, '23:30');
+    h += tape(470, y(842), 3.5, 'On stage', 'AMISTA', '+ MARET THE VOICE');
+    h += footer(fb, `Dalle 20:30 cena animata &amp; karaoke con Berni Show · cena alla carta`);
   } else {
-    html += titleBlock('Cena animata', 'KARAOKE', L.megaK);
-    html += `<div class="abs cinta alt" style="top:${L.cinta - 90}px;transform:rotate(3deg)">
-      SE COME<span class="st">✦</span>SE CANTA<span class="st">✦</span>SE GOZA<span class="st">✦</span>LATIN VIBES</div>`;
-    html += `<div class="abs" style="left:62px;top:${L.ticket - 80}px">${ticket('20:30')}</div>`;
-    html += `<div class="abs" style="left:70px;top:${L.rot - 70}px;transform:rotate(-3deg)">
-      <div class="rotulo"><div class="k">AL MICROFONO</div><div class="a">BERNI <i style="padding:0">SHOW</i></div></div></div>`;
-    html += footer(H, `Cena <b>alla carta</b> · dalle <b>23:30</b> MAMA CHE FUEGO con <b>Amista</b> + <b>Maret The Voice</b>`);
+    h += palms(H, '#2a0a06');
+    h += `<div class="abs tracked" style="left:0;right:0;top:${y(48)}px">Mamatò presents</div>`;
+    h += `<div class="abs hand" style="left:120px;top:${y(96)}px;font-size:80px;transform:rotate(-7deg);text-transform:none;z-index:2">Cena animata</div>`;
+    h += `<div class="abs title-shadow" style="left:0;right:0;top:${y(165)}px;text-align:center">
+      <div class="brush" style="font-size:208px;color:var(--crema)">KARAOKE</div></div>`;
+    h += `<div class="abs" style="left:880px;top:${y(118)}px;transform:rotate(14deg)">${crown(96, 'var(--senape)')}</div>`;
+    h += `<div class="abs hand" style="left:0;right:0;top:${y(372)}px;text-align:center;font-size:34px;transform:rotate(-2deg);color:var(--senape)">
+      Se come <span style="color:var(--rosso)">/</span> se canta <span style="color:var(--rosso)">/</span> se goza ${heart(30)}</div>`;
+    // la sala del Mamatò, come ritaglio di carta strappata
+    h += `<div class="abs" style="left:-20px;top:${y(440)}px;width:1120px;transform:rotate(-1.5deg);filter:drop-shadow(0 20px 30px rgba(0,0,0,.6))">
+      <div style="${tornClip(2.5, 2)}"><img src="assets/sala-cena.jpg" style="width:100%;display:block;filter:brightness(1.18) saturate(1.1)"></div></div>`;
+    h += `<div class="abs" style="left:0;right:0;top:${y(440)}px;height:660px;background:linear-gradient(180deg,rgba(13,6,8,0) 55%,rgba(13,6,8,.7))"></div>`;
+    h += `<div class="abs" style="left:800px;top:${y(470)}px;transform:rotate(14deg)">${micDoodle(150)}</div>`;
+    h += `<div class="abs hand" style="left:600px;top:${y(470)}px;font-size:30px;transform:rotate(-6deg);color:var(--crema);text-shadow:0 2px 12px #000">Prima del<br>perreo ${heart(28)}</div>`;
+    h += dateCard(56, y(745), -3, '20:30');
+    h += tape(560, y(875), 4, 'Al microfono', 'BERNI SHOW', '');
+    h += `<div class="abs hand" style="left:596px;top:${y(1000)}px;font-size:28px;color:var(--crema);transform:rotate(4deg)">cena alla carta ${heart(26, 'var(--senape)')}</div>`;
+    h += footer(fb, `Poi dalle 23:30 MAMA CHE FUEGO con Amista + Maret The Voice`);
   }
-  html += frameLayer(H) + grainLayer(H);
-  el.innerHTML = html;
+  h += vignette + grain(H);
+  el.innerHTML = h;
 }
 
-document.fonts.ready.then(() => {
+document.fonts.ready.then(async () => {
   build('fuego-feed', 'fuego'); build('cena-feed', 'cena');
   build('fuego-story', 'fuego'); build('cena-story', 'cena');
+  await Promise.all([...document.images].map(i => i.decode().catch(() => {})));
   document.body.dataset.ready = '1';
 });
 </script>
