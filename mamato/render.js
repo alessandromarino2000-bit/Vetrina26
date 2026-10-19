@@ -8,7 +8,10 @@ const path = require('path');
   await page.goto('file://' + path.join(__dirname, 'posters.html'));
   await page.waitForSelector('body[data-ready="1"]');
   await page.waitForTimeout(300);
-  for (const id of ['fuego-feed', 'cena-feed', 'fuego-story', 'cena-story']) {
+  const ids = await page.$$eval('.board', els => els.map(e => e.id));
+  const only = process.argv[2];
+  for (const id of ids) {
+    if (only && !id.startsWith(only)) continue;
     await page.locator('#' + id).screenshot({ path: path.join(__dirname, 'export', `mamato-${id}.png`) });
   }
   await browser.close();
