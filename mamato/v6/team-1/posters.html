@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mamatò Editoriale</title>
+<link rel="stylesheet" href="../../fonts/fonts.css">
+<link rel="stylesheet" href="fonts/bodoni.css">
+<style>
+:root{
+  --nero:#0D0608;
+  --rosso:#E01E37;
+  --oro:#F2B33D;
+  --crema:#FFF1DC;
+  --hair:rgba(242,179,61,.55);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1a1a1a;display:flex;flex-wrap:wrap;gap:40px;padding:40px;align-items:flex-start}
+.board{position:relative;width:1080px;overflow:hidden;background:var(--nero);color:var(--crema);
+  font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;font-kerning:normal;
+  font-feature-settings:"kern","liga","lnum"}
+.board.feed{height:1350px}
+.board.story{height:1920px}
+.layer{position:absolute;inset:0;pointer-events:none}
+.photo{position:absolute;display:block;max-width:none}
+
+.mast{position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center;z-index:3}
+.mast img{height:42px;display:block}
+.tag{margin-top:14px;font-size:11.5px;font-weight:500;letter-spacing:.62em;text-indent:.62em;color:var(--oro);text-transform:uppercase}
+
+.copy{position:absolute;left:76px;right:76px;z-index:3}
+.kicker{font-size:15px;font-weight:600;letter-spacing:.42em;text-transform:uppercase;color:var(--oro)}
+.bod{font-family:'Bodoni Moda',serif;font-style:italic;font-variation-settings:"opsz" 96}
+.pre{font-weight:400;font-size:84px;line-height:1;letter-spacing:-.01em;margin-bottom:14px}
+.title{font-weight:500;line-height:.8;letter-spacing:-.025em;margin-left:-.04em}
+.amp{font-style:inherit;color:var(--oro)}
+.hair{height:1px;background:var(--hair)}
+
+.grid{display:grid;grid-template-columns:1fr 1px 1fr;column-gap:44px;padding:30px 0 30px}
+.grid .v{background:var(--hair)}
+.lab{font-size:13.5px;font-weight:600;letter-spacing:.42em;text-transform:uppercase;color:var(--oro);margin-bottom:12px}
+.date{font-family:'Bodoni Moda',serif;font-weight:500;font-size:58px;line-height:1;letter-spacing:-.005em;font-variation-settings:"opsz" 72}
+.time{margin-top:12px;font-family:'Bodoni Moda',serif;font-weight:500;font-size:46px;line-height:1;font-variation-settings:"opsz" 48;display:flex;align-items:baseline;gap:16px}
+.time span{font-family:'Montserrat';font-size:14px;font-weight:600;letter-spacing:.42em;margin-right:-.42em;text-transform:uppercase;color:var(--oro)}
+.note{margin-top:16px;font-size:13.5px;font-weight:600;letter-spacing:.32em;line-height:1.75;text-transform:uppercase;color:rgba(255,241,220,.8)}
+.who{font-family:'Bodoni Moda',serif;font-style:italic;font-weight:500;font-size:46px;line-height:1.08;font-variation-settings:"opsz" 30}
+
+.also{font-family:'Bodoni Moda',serif;font-style:italic;font-weight:400;font-size:25px;line-height:1.35;color:rgba(255,241,220,.86);padding-top:26px;font-variation-settings:"opsz" 12}
+.also b{font-weight:600;color:var(--crema)}
+.book{margin-top:26px;font-size:21px;font-weight:700;letter-spacing:.24em;text-transform:uppercase}
+.book span{color:var(--oro)}
+.addr{margin-top:10px;font-size:13px;font-weight:500;letter-spacing:.36em;text-transform:uppercase;opacity:.66}
+.grain{mix-blend-mode:overlay;opacity:.16}
+</style>
+</head>
+<body>
+<div class="board feed"  id="latin-feed"></div>
+<div class="board feed"  id="karaoke-feed"></div>
+<div class="board story" id="latin-story"></div>
+<div class="board story" id="karaoke-story"></div>
+
+<script>
+// Two moments, one system: same masthead, same grid, same type. Only photo + words change.
+const P = {
+  latin: {
+    img:'img/latin.jpg',
+    note:'Reggaeton · Latin hits<br>Dembow · Brazilian funk',
+    pre:'Mama che', title:'Fuego', size:{feed:320, story:350}, gap:.26,
+    time:'23:30', lab2:'On stage', who:'Amista <i class="amp">&amp;</i><br>Maret The Voice',
+    also:'Dalle 20:30 <b>cena animata e karaoke</b> con Berni Show · cena alla carta',
+    // photo placement [top, height, object-position]
+    pos:{feed:[-130,-10,1300], story:[-174,0,1580]},
+    shade:{
+      feed:'linear-gradient(180deg,rgba(13,6,8,.9) 0%,rgba(13,6,8,.5) 7%,rgba(13,6,8,.12) 15%,rgba(13,6,8,0) 22%,rgba(13,6,8,0) 28%,rgba(13,6,8,.45) 37%,rgba(13,6,8,.7) 47%,rgba(13,6,8,.88) 60%,var(--nero) 74%)',
+      story:'linear-gradient(180deg,rgba(13,6,8,.92) 0%,rgba(13,6,8,.62) 11%,rgba(13,6,8,.22) 19%,rgba(13,6,8,.04) 26%,rgba(13,6,8,0) 30%,rgba(13,6,8,.5) 39%,rgba(13,6,8,.78) 47%,rgba(13,6,8,.9) 58%,var(--nero) 70%)'}
+  },
+  karaoke: {
+    img:'img/karaoke.jpg',
+    note:'Cena alla carta',
+    pre:'Cena animata <i class="amp">&amp;</i>', title:'Karaoke', size:{feed:262, story:262}, gap:.12,
+    time:'20:30', lab2:'Con', who:'Berni Show',
+    also:'A seguire, dalle 23:30, <b>Mama Che Fuego</b> con Amista &amp; Maret The Voice',
+    pos:{feed:[-50,-110,1460], story:[-256,-30,1700]},
+    shade:{
+      feed:'linear-gradient(180deg,rgba(13,6,8,.9) 0%,rgba(13,6,8,.66) 7%,rgba(13,6,8,.34) 14%,rgba(13,6,8,.12) 21%,rgba(13,6,8,0) 29%,rgba(13,6,8,0) 34%,rgba(13,6,8,.52) 46%,rgba(13,6,8,.86) 60%,var(--nero) 74%)',
+      story:'linear-gradient(180deg,var(--nero) 0%,rgba(13,6,8,.86) 6%,rgba(13,6,8,.5) 12%,rgba(13,6,8,.2) 18%,rgba(13,6,8,.06) 24%,rgba(13,6,8,0) 29%,rgba(13,6,8,0) 38%,rgba(13,6,8,.45) 48%,rgba(13,6,8,.86) 60%,var(--nero) 72%)'}
+  }
+};
+
+const grain = id => `<svg class="layer grain" width="100%" height="100%"><filter id="n${id}"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n${id})"/></svg>`;
+
+function build(el){
+  const [kind, fmt] = el.id.split('-'), d = P[kind], story = fmt==='story';
+  const T = story ? 250 : 70, B = story ? 250 : 64;
+  const [pl, pt, ph] = d.pos[fmt];
+  el.innerHTML = `
+    <img class="photo" src="${d.img}" style="left:${pl}px;top:${pt}px;height:${ph}px">
+    <div class="layer" style="background:${d.shade[fmt]}"></div>
+    <div class="layer" style="background:radial-gradient(ellipse 460px 170px at 50% ${T+42}px,rgba(13,6,8,.62),rgba(13,6,8,0) 100%)"></div>
+    <div class="mast" style="top:${T}px"><img src="img/logo-crema.png" alt="Mamatò"><div class="tag">Drinks food and amore</div></div>
+    <div class="copy" style="bottom:${B}px">
+      <div class="bod pre">${d.pre}</div>
+      <div class="bod title" style="font-size:${d.size[fmt]}px">${d.title}</div>
+      <div class="hair" style="margin-top:${Math.round(d.size[fmt]*d.gap)}px"></div>
+      <div class="grid">
+        <div><div class="lab">Venerdì</div><div class="date">30 ottobre</div><div class="time"><span>dalle</span>${d.time}</div></div>
+        <div class="v"></div>
+        <div><div class="lab">${d.lab2}</div><div class="who">${d.who}</div><div class="note">${d.note}</div></div>
+      </div>
+      <div class="hair"></div>
+      <div class="also">${d.also}</div>
+      <div class="book">Prenota il tuo tavolo · <span>0522 1900196</span></div>
+      <div class="addr">Via G. Galilei, 13 · Zona Rame · Reggiolo (RE)</div>
+    </div>
+    ${grain(el.id)}`;
+}
+
+document.fonts.ready.then(async () => {
+  document.querySelectorAll('.board').forEach(build);
+  await document.fonts.ready;
+  await Promise.all([...document.images].map(i => i.decode().catch(() => {})));
+  document.body.dataset.ready = '1';
+});
+</script>
+</body>
+</html>

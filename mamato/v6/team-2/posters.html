@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mamatò Manifesto</title>
+<link rel="stylesheet" href="../../fonts/fonts.css">
+<style>
+@font-face{font-family:'Archivo';font-style:normal;font-weight:100 900;font-stretch:62% 125%;src:url(fonts/Archivo-var.woff2) format('woff2')}
+:root{--nero:#0D0608;--rosso:#E01E37;--oro:#F2B33D;--crema:#FFF1DC;--M:64px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1a1a1a;display:flex;flex-wrap:wrap;gap:40px;padding:40px;align-items:flex-start}
+.board{position:relative;width:1080px;overflow:hidden;background:var(--nero);color:var(--crema);font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased}
+.board.feed{height:1350px}.board.story{height:1920px}
+.ph{position:absolute;display:block;z-index:0}
+.ph.fg{z-index:3}
+.layer{position:absolute;inset:0}
+
+/* lockup: real wordmark + tagline */
+.top{position:absolute;left:var(--M);display:flex;flex-direction:column;align-items:flex-start;gap:13px;z-index:5}
+.logo{height:38px;display:block}
+.tag{font-weight:600;font-size:12.5px;letter-spacing:.39em;text-transform:uppercase;padding-left:2px}
+
+/* title: italic serif kicker + monumental condensed grotesk */
+.kicker{position:absolute;left:var(--M);font-family:'Cormorant Garamond';font-style:italic;font-weight:600;font-size:92px;line-height:1;z-index:4;white-space:nowrap;letter-spacing:-.005em}
+.head{position:absolute;left:0;font-weight:900;font-stretch:extra-condensed;text-transform:uppercase;line-height:1;white-space:nowrap;z-index:2;color:var(--rosso)}
+
+/* info grid */
+.info{position:absolute;left:var(--M);right:var(--M);z-index:5}
+.grid{display:grid;grid-template-columns:1fr 1fr 1.45fr;border-top:1.5px solid rgba(255,241,220,.42)}
+.cell{padding:22px 24px 0 0}
+.cell+.cell{padding-left:26px;border-left:1.5px solid rgba(255,241,220,.42)}
+.lab{font-weight:700;font-size:14px;letter-spacing:.3em;text-transform:uppercase;color:var(--oro);margin-bottom:13px}
+.val{font-weight:800;font-stretch:72%;font-size:62px;line-height:.92;text-transform:uppercase;letter-spacing:.005em}
+.val.sm{font-size:41px;font-stretch:76%;line-height:1}
+.line{font-weight:600;font-size:16px;letter-spacing:.3em;text-transform:uppercase;margin-top:30px;opacity:.92}
+.cross{font-family:'Cormorant Garamond';font-style:italic;font-weight:600;font-size:30px;line-height:1.15;margin-top:12px;opacity:.92}
+
+/* booking band */
+.band{position:absolute;left:0;right:0;background:var(--rosso);z-index:5;padding:0 var(--M)}
+.band .in{display:flex;justify-content:space-between;align-items:center;height:112px}
+.b1{font-weight:800;font-size:21px;letter-spacing:.22em;text-transform:uppercase}
+.b2{font-weight:500;font-size:15px;letter-spacing:.2em;text-transform:uppercase;margin-top:8px;opacity:.92}
+.tel{font-weight:900;font-stretch:72%;font-size:60px;letter-spacing:.01em;line-height:1}
+</style>
+</head>
+<body>
+<script>
+const LOGOS = {crema:'../../assets/logo-crema.png', nero:'img/logo-nero.png'};
+
+/* Shared vertical system.
+   feed : lockup 44 · kicker 150 · headline 262 · grid 950 · band 1238→bottom
+   story: everything inside the 250px safe zone; band runs to the bottom edge, its text ends at 1670. */
+const SYS = {
+  feed: {top:44,  kick:150, head:262, info:950,  band:1238},
+  story:{top:256, kick:372, head:486, info:1262, band:1558},
+};
+
+const PHOTO = {
+  // photos pre-scaled + cropped to each board by scale.py (Lanczos), so they sit at 0,0.
+  // singer: cutout layer sits above the headline so he stands in front of KARAOKE
+  'karaoke-feed': {src:'img/karaoke-feed-bg.jpg', fg:'img/karaoke-feed-fg.png'},
+  'karaoke-story':{src:'img/karaoke-story-bg.jpg', fg:'img/karaoke-story-fg.png'},
+  // crowd at the entrance of Mamatò, sign cropped out of frame
+  'latin-feed':   {src:'img/latin-feed-bg.jpg'},
+  'latin-story':  {src:'img/latin-story-bg.jpg'},
+};
+
+const SHADE = {
+  'karaoke-feed': 'linear-gradient(180deg,rgba(13,6,8,0) 0%,rgba(13,6,8,0) 52%,rgba(13,6,8,.8) 67%,rgba(13,6,8,.95) 80%)',
+  'karaoke-story':'linear-gradient(180deg,rgba(13,6,8,0) 0%,rgba(13,6,8,0) 50%,rgba(13,6,8,.8) 62%,rgba(13,6,8,.95) 72%,rgba(13,6,8,.9) 100%)',
+  'latin-feed':   'linear-gradient(180deg,rgba(13,6,8,.8) 0%,rgba(13,6,8,.7) 30%,rgba(13,6,8,0) 46%,rgba(13,6,8,0) 55%,rgba(13,6,8,.8) 68%,rgba(13,6,8,.95) 80%)',
+  'latin-story':  'linear-gradient(180deg,rgba(13,6,8,.88) 0%,rgba(13,6,8,.78) 14%,rgba(13,6,8,.7) 32%,rgba(13,6,8,0) 44%,rgba(13,6,8,0) 52%,rgba(13,6,8,.8) 63%,rgba(13,6,8,.95) 72%,var(--nero) 84%)',
+};
+
+const TXT = {
+  karaoke:{ ink:'nero', kicker:'Cena animata &amp;', head:'Karaoke',
+      cells:[['Venerdì','30<br>ottobre'],['Dalle','20:30'],['Con','Berni<br>Show']],
+      line:'Cena alla carta',
+      cross:'A seguire, dalle 23:30, Mama Che Fuego con Amista &amp; Maret The Voice' },
+  latin:{ ink:'crema', kicker:'Mama che', head:'Fuego',
+      cells:[['Venerdì','30<br>ottobre'],['Dalle','23:30'],['On stage','Amista &amp;<br>Maret The Voice',1]],
+      line:'Reggaeton · Latin hits · Dembow · Brazilian funk',
+      cross:'Dalle 20:30 cena animata e karaoke con Berni Show · cena alla carta' },
+};
+
+function board(id){
+  const [kind, fmt] = id.split('-'), t = TXT[kind], p = PHOTO[id], S = SYS[fmt];
+  const img = (src,c='') => `<img class="ph ${c}" src="${src}" style="left:0;top:0;width:1080px;height:100%">`;
+  return `<div class="board ${fmt}" id="${id}">
+    ${img(p.src)}
+    <div class="layer" style="background:${SHADE[id]};z-index:${p.fg?4:1}"></div>
+    <div class="head" style="top:${S.head}px">${t.head}</div>
+    ${p.fg ? img(p.fg,'fg') : ''}
+    <div class="top" style="top:${S.top}px;color:var(--${t.ink})"><img class="logo" src="${LOGOS[t.ink]}"><span class="tag">Drinks food and amore</span></div>
+    <div class="kicker" style="top:${S.kick}px;color:var(--${t.ink})">${t.kicker}</div>
+    <div class="info" style="top:${S.info}px">
+      <div class="grid">${t.cells.map(c=>`<div class="cell"><div class="lab">${c[0]}</div><div class="val ${c[2]?'sm':''}">${c[1]}</div></div>`).join('')}</div>
+      <div class="line">${t.line}</div>
+      <div class="cross">${t.cross}</div>
+    </div>
+    <div class="band" style="top:${S.band}px">
+      <div class="in"><div><div class="b1">Prenota il tuo tavolo</div><div class="b2">Via G. Galilei, 13 · Zona Rame · Reggiolo (RE)</div></div>
+      <div class="tel">0522 1900196</div></div>
+    </div>
+  </div>`;
+}
+document.body.innerHTML += ['latin-feed','karaoke-feed','latin-story','karaoke-story'].map(board).join('');
+
+/* Fit each headline so its INK (not its side bearings) spans exactly INK_L..1080-INK_L. */
+const INK_L = 24;
+function fitHeads(){
+  const c = document.createElement('canvas').getContext('2d');
+  document.querySelectorAll('.head').forEach(el=>{
+    const txt = el.textContent.toUpperCase();
+    c.font = '900 extra-condensed 100px Archivo';
+    const m = c.measureText(txt);
+    const ink = m.actualBoundingBoxLeft + m.actualBoundingBoxRight;
+    const fs = 100 * (1080 - 2*INK_L) / ink;
+    el.style.fontSize = fs + 'px';
+    el.style.left = (INK_L + m.actualBoundingBoxLeft*fs/100) + 'px';
+    // shift up so the cap top (not the line box) sits on the system line
+    const half = (100 - m.fontBoundingBoxAscent - m.fontBoundingBoxDescent)/2;
+    const capTop = (half + m.fontBoundingBoxAscent - m.actualBoundingBoxAscent)*fs/100;
+    el.style.marginTop = (-capTop) + 'px';
+    el.dataset.cap = (m.actualBoundingBoxAscent*fs/100).toFixed(1);
+  });
+}
+Promise.all([document.fonts.load('900 100px Archivo'), document.fonts.load('italic 600 100px "Cormorant Garamond"'), document.fonts.ready])
+ .then(()=>{ fitHeads(); return Promise.all([...document.images].map(i=>i.decode().catch(()=>{})));})
+ .then(()=>{ document.body.dataset.ready='1'; });
+</script>
+</body>
+</html>

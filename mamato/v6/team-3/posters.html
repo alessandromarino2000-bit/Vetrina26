@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Mamatò v6 · Cinema</title>
+<link rel="stylesheet" href="../../fonts/fonts.css">
+<link rel="stylesheet" href="fonts/local.css">
+<style>
+:root{
+  --nero:#0D0608; --rosso:#E01E37; --oro:#F2B33D; --crema:#FFF1DC;
+  --oro-soft:#E9B868;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#222;display:flex;flex-wrap:wrap;gap:40px;padding:40px;align-items:flex-start}
+.board{position:relative;width:1080px;overflow:hidden;background:var(--nero);color:var(--crema);
+  font-family:'Barlow Condensed',sans-serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+.board.feed{height:1350px}
+.board.story{height:1920px;--tsize:300px}
+.board.story .credits{margin-top:56px}
+.board.story .date{margin-top:40px}
+.board.story .rule{margin-top:40px}
+
+.photo{position:absolute;left:0;top:0;background-repeat:no-repeat}
+.shade{position:absolute;inset:0;pointer-events:none}
+
+/* ---------- top: logo ---------- */
+.top{position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center}
+.top img{display:block;width:210px;height:auto}
+
+/* ---------- title + credits stack (bottom anchored) ---------- */
+.stack{position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center;text-align:center}
+
+.kicker{font-weight:600;font-size:40px;letter-spacing:.46em;margin-right:-.46em;color:var(--oro);text-transform:uppercase;line-height:1;text-shadow:0 2px 24px rgba(13,6,8,.9),0 0 8px rgba(13,6,8,.6)}
+.kicker .amp{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;letter-spacing:0;font-size:1.25em;text-transform:none;margin:0 .1em 0 -.2em}
+.title{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:var(--tsize,290px);line-height:.78;letter-spacing:-.012em;color:var(--crema);
+  margin-top:18px;text-shadow:0 6px 60px rgba(13,6,8,.55)}
+.genres{margin-top:66px;font-weight:500;font-size:25px;letter-spacing:.34em;margin-right:-.34em;text-transform:uppercase;color:rgba(255,241,220,.82)}
+.genres i{font-style:normal;color:var(--rosso);margin:0 .35em}
+
+.credits{margin-top:40px;display:flex;flex-direction:column;align-items:center}
+.label{font-weight:500;font-size:21px;letter-spacing:.42em;margin-right:-.42em;text-transform:uppercase;color:rgba(255,241,220,.62)}
+.names{margin-top:10px;font-weight:600;font-size:50px;letter-spacing:.16em;margin-right:-.16em;text-transform:uppercase;line-height:1}
+.names .amp{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;font-size:1.08em;letter-spacing:0;text-transform:none;color:var(--oro);margin:0 .22em 0 .06em}
+
+.date{margin-top:30px;font-weight:600;font-size:44px;letter-spacing:.2em;margin-right:-.2em;text-transform:uppercase;color:var(--oro);line-height:1;display:flex;align-items:center;gap:26px}
+.date .sep{width:7px;height:7px;border-radius:50%;background:var(--rosso);display:inline-block}
+
+.other{margin-top:22px;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;font-size:29px;color:rgba(255,241,220,.86);letter-spacing:.005em}
+
+.rule{margin-top:30px;width:64px;height:1px;background:rgba(242,179,61,.7)}
+.book{margin-top:24px;font-weight:600;font-size:29px;letter-spacing:.26em;margin-right:-.26em;text-transform:uppercase}
+.book b{font-weight:600;color:var(--oro)}
+.addr{margin-top:12px;font-weight:400;font-size:21px;letter-spacing:.3em;margin-right:-.3em;text-transform:uppercase;color:rgba(255,241,220,.6)}
+</style>
+</head>
+<body>
+
+<div class="board feed"  id="latin-feed"    data-kind="latin"></div>
+<div class="board story" id="latin-story"   data-kind="latin"></div>
+<div class="board feed"  id="karaoke-feed"  data-kind="karaoke"></div>
+<div class="board story" id="karaoke-story" data-kind="karaoke"></div>
+
+<script>
+const COPY = {
+  latin: {
+    img:'img/latin.jpg', iw:1200, ih:1600,
+    kicker:'Mama che', title:'Fuego',
+    genres:['Reggaeton','Latin hits','Dembow','Brazilian funk'],
+    label:'On stage', names:'Amista <span class="amp">&amp;</span> Maret The Voice',
+    time:'Dalle 23:30',
+    other:'Dalle 20:30 cena animata e karaoke con Berni Show · cena alla carta'
+  },
+  karaoke: {
+    img:'img/karaoke.jpg', iw:1216, ih:1318,
+    kicker:'Cena animata <span class="amp">&amp;</span>', title:'Karaoke',
+    genres:null,
+    label:'Con', names:'Berni Show',
+    sub:'Cena alla carta',
+    time:'Dalle 20:30',
+    other:'A seguire, dalle 23:30, Mama Che Fuego con Amista &amp; Maret The Voice'
+  }
+};
+/* photo framing per board: scale + offset (px) and shade gradients */
+const FRAME = {
+  'latin-feed':    {s:0.92, x:-12,  y:-805, top:220, fadeFrom:430, fadeTo:700},
+  'latin-story':   {s:1.1,  x:-120, y:-770, top:420, fadeFrom:700, fadeTo:1010},
+  'karaoke-feed':  {s:1.0,  x:-40,  y:0,    top:220, fadeFrom:520, fadeTo:940},
+  'karaoke-story': {s:1.4,  x:-190, y:-40,  top:480, fadeFrom:760, fadeTo:1260},
+};
+
+function build(b){
+  const k=b.dataset.kind, c=COPY[k], f=FRAME[b.id], story=b.classList.contains('story');
+  const H=story?1920:1350;
+  const w=c.iw*f.s, h=c.ih*f.s;
+  b.innerHTML = `
+    <div class="photo" style="width:${w}px;height:${h}px;left:${f.x}px;top:${f.y}px;background-image:url(${c.img});background-size:${w}px ${h}px"></div>
+    <div class="shade" style="background:
+      linear-gradient(180deg, rgba(13,6,8,.88) 0px, rgba(13,6,8,.35) ${f.top*0.6}px, rgba(13,6,8,0) ${f.top}px),
+      linear-gradient(180deg, rgba(13,6,8,0) ${f.fadeFrom}px, rgba(13,6,8,.72) ${(f.fadeFrom+f.fadeTo)/2}px, rgba(13,6,8,1) ${f.fadeTo}px)"></div>
+    <div class="shade" style="background:radial-gradient(120% 80% at 50% 40%, rgba(13,6,8,0) 55%, rgba(13,6,8,.55) 100%)"></div>
+    <div class="top" style="top:${story?280:72}px"><img src="../../assets/logo-crema.png" alt="Mamatò"></div>
+    <div class="stack" style="bottom:${story?268:66}px">
+      <div class="kicker">${c.kicker}</div>
+      <div class="title">${c.title}</div>
+      ${c.genres?`<div class="genres">${c.genres.join('<i>·</i>')}</div>`:''}
+      <div class="credits">
+        <div class="label">${c.label}</div>
+        <div class="names">${c.names}</div>
+        ${c.sub?`<div class="label" style="margin-top:14px">${c.sub}</div>`:''}
+      </div>
+      <div class="date">Venerdì 30 ottobre<span class="sep"></span>${c.time}</div>
+      <div class="other">${c.other}</div>
+      <div class="rule"></div>
+      <div class="book">Prenota il tuo tavolo · <b>0522 1900196</b></div>
+      <div class="addr">Via G. Galilei, 13 · Zona Rame · Reggiolo (RE)</div>
+    </div>`;
+}
+document.querySelectorAll('.board').forEach(build);
+Promise.all([document.fonts.ready,
+  ...[...new Set(Object.values(COPY).map(c=>c.img).concat(['../../assets/logo-crema.png']))].map(src=>{const i=new Image();i.src=src;return i.decode();})
+]).then(()=>{document.body.dataset.ready='1'});
+</script>
+</body>
+</html>
