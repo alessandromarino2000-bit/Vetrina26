@@ -7,298 +7,173 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
 :root{
-  --nero:#0D0608;     /* fondo */
-  --rosso:#E01E37;    /* rosso Mamatò (insegna, scritte a mano) */
-  --magenta:#FF2E88;  /* neon della serra */
+  --nero:#0D0608;
+  --rosso:#E01E37;
   --senape:#F2B33D;   /* oro del logo */
-  --crema:#FFF1DC;    /* carta, titoli */
+  --crema:#FFF1DC;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#222;display:flex;flex-wrap:wrap;gap:40px;padding:40px;align-items:flex-start}
 .board{position:relative;width:1080px;overflow:hidden;background:var(--nero);color:var(--crema);font-family:'Montserrat',sans-serif}
 .board.feed{height:1350px}
 .board.story{height:1920px}
-.abs{position:absolute}
 .layer{position:absolute;inset:0;pointer-events:none}
+.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
-.tracked{font-weight:500;letter-spacing:10px;text-transform:uppercase;font-size:20px;text-align:center}
-.hand{font-family:'Permanent Marker';color:var(--rosso);line-height:1.05;text-transform:uppercase}
-.note{font-size:32px;color:var(--crema);text-shadow:0 0 14px #000,0 0 4px #000}
-.brush{font-family:'Knewave';line-height:.9;white-space:nowrap;filter:url(#brush)}
-.title-shadow{filter:drop-shadow(0 8px 0 rgba(0,0,0,.55)) drop-shadow(0 0 40px rgba(224,30,55,.45))}
-.paper{background:var(--crema);color:var(--nero);box-shadow:0 18px 30px rgba(0,0,0,.55)}
-.tape{background:var(--rosso);color:var(--crema)}
+/* contenuto: un blocco in alto e uno in basso, così il 9:16 si adatta da solo */
+.top,.bottom{position:absolute;left:84px;right:84px;display:flex;flex-direction:column;z-index:2}
+.center{align-items:center;text-align:center}
+.left{align-items:flex-start;text-align:left}
 
-.foot{left:0;right:0;text-align:center}
-.foot .logo{height:66px;display:block;margin:0 auto}
-.foot .tag{font-family:'Josefin Sans';font-weight:700;letter-spacing:7px;font-size:17px;color:var(--senape);margin-top:8px}
-.foot .book{font-weight:800;font-size:31px;letter-spacing:2px;margin-top:20px}
-.foot .book span{color:var(--senape)}
-.foot .addr{font-weight:500;font-size:16px;letter-spacing:6px;margin-top:10px;opacity:.85}
-.sticker{filter:drop-shadow(4px 0 0 var(--crema)) drop-shadow(-4px 0 0 var(--crema)) drop-shadow(0 4px 0 var(--crema)) drop-shadow(0 -4px 0 var(--crema)) drop-shadow(0 16px 22px rgba(0,0,0,.7))}
-.grain{mix-blend-mode:overlay;opacity:.45}
+.logo{height:46px}
+.serif{font-family:'Cormorant Garamond';font-style:italic;font-weight:600;line-height:.95}
+.display{font-family:'Anton';text-transform:uppercase;letter-spacing:.05em;line-height:.86}
+.caps{font-weight:600;letter-spacing:.42em;text-transform:uppercase;font-size:19px;line-height:1.5}
+.gold{color:var(--senape)}
+.rule{width:84px;height:2px;background:var(--senape);margin:26px 0}
+.row{display:flex;gap:28px;align-items:center}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--senape)}
+
+.book{font-weight:700;font-size:24px;letter-spacing:.2em;margin-top:30px}
+.book span{color:var(--senape)}
+.addr{font-weight:500;font-size:14px;letter-spacing:.38em;margin-top:12px;opacity:.75}
+.frame{position:absolute;inset:30px;border:1.5px solid rgba(255,241,220,.45);z-index:3;pointer-events:none}
+/* nel 9:16 la foto entra tutta in altezza: si stringe per escludere l'insegna */
+.story .bg-c{transform:scale(1.32);transform-origin:center 100%}
+.grain{mix-blend-mode:overlay;opacity:.22}
 </style>
 </head>
 <body>
-<!-- filtri condivisi: pennello secco, bordo ruvido, carta -->
-<svg width="0" height="0" style="position:absolute">
-  <filter id="brush" x="-5%" y="-10%" width="110%" height="120%">
-    <feTurbulence type="fractalNoise" baseFrequency=".04 .09" numOctaves="2" seed="4" result="n"/>
-    <feDisplacementMap in="SourceGraphic" in2="n" scale="8" xChannelSelector="R" yChannelSelector="G" result="d"/>
-    <feTurbulence type="fractalNoise" baseFrequency=".01 .16" numOctaves="3" seed="9" result="s"/>
-    <feColorMatrix in="s" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -16 0 0 0 11.4" result="m"/>
-    <feComposite in="d" in2="m" operator="in"/>
-  </filter>
-  <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="2"/><feDisplacementMap in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>
-  <filter id="paperTex"><feTurbulence type="fractalNoise" baseFrequency=".6" numOctaves="3" seed="5"/><feColorMatrix type="matrix" values="0 0 0 0 .55  0 0 0 0 .45  0 0 0 0 .35  0 0 -1.4 0 .9"/></filter>
-</svg>
-
-<!-- 6 soggetti × 2 formati: A-B-C Latin night, D-E-F cena animata / karaoke -->
-<div class="board feed" id="a-fachada-feed"></div>
-<div class="board feed" id="b-collage-feed"></div>
-<div class="board feed" id="c-neon-feed"></div>
-<div class="board feed" id="d-popout-feed"></div>
-<div class="board feed" id="e-tavolata-feed"></div>
-<div class="board feed" id="f-noche-feed"></div>
-<div class="board story" id="a-fachada-story"></div>
-<div class="board story" id="b-collage-story"></div>
-<div class="board story" id="c-neon-story"></div>
-<div class="board story" id="d-popout-story"></div>
-<div class="board story" id="e-tavolata-story"></div>
-<div class="board story" id="f-noche-story"></div>
+<!-- A-B-C Latin night (foto del locale) · D-E-F cena animata e karaoke (scene di canto) -->
+<div class="board feed" id="a-facciata-feed"></div>
+<div class="board feed" id="b-consolle-feed"></div>
+<div class="board feed" id="c-folla-feed"></div>
+<div class="board feed" id="d-cantante-feed"></div>
+<div class="board feed" id="e-ragazze-feed"></div>
+<div class="board feed" id="f-tavolata-feed"></div>
+<div class="board story" id="a-facciata-story"></div>
+<div class="board story" id="b-consolle-story"></div>
+<div class="board story" id="c-folla-story"></div>
+<div class="board story" id="d-cantante-story"></div>
+<div class="board story" id="e-ragazze-story"></div>
+<div class="board story" id="f-tavolata-story"></div>
 
 <script>
-let seed = 7;
-const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-const W = 1080;
+const LOGO = `<img class="logo" src="assets/logo-crema.png">`;
+const shade = css => `<div class="layer" style="background:${css}"></div>`;
+const grain = id => `<svg class="layer grain" width="100%" height="100%"><filter id="n${id}"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n${id})"/></svg>`;
 
-// ---------- elementi grafici ricorrenti ----------
-// bordo strappato: clip-path con margini frastagliati
-function tornClip(depth = 2.2, step = 2.5) {
-  const pts = [];
-  for (let x = 0; x <= 100; x += step) pts.push(`${x}% ${rnd() * depth}%`);
-  for (let y = 0; y <= 100; y += step * 2) pts.push(`${100 - rnd() * depth * .5}% ${y}%`);
-  for (let x = 100; x >= 0; x -= step) pts.push(`${x}% ${100 - rnd() * depth}%`);
-  for (let y = 100; y >= 0; y -= step * 2) pts.push(`${rnd() * depth * .5}% ${y}%`);
-  return `clip-path:polygon(${pts.join(',')})`;
-}
-const paperTex = `<svg class="layer" width="100%" height="100%"><rect width="100%" height="100%" filter="url(#paperTex)"/></svg>`;
+const BOOK = `<div class="book">PRENOTA IL TUO TAVOLO · <span>0522 1900196</span></div>
+  <div class="addr">VIA G. GALILEI, 13 · ZONA RAME · REGGIOLO (RE)</div>`;
+const GENRES = `<div class="caps gold" style="font-size:16px;letter-spacing:.36em">Reggaeton · Latin hits · Dembow · Brazilian funk</div>`;
+const DATE = time => `<div class="row"><span class="caps">Venerdì 30 ottobre</span><span class="dot"></span><span class="caps">Dalle ${time}</span></div>`;
+const TO_DINNER = `<div class="serif" style="font-size:31px;margin-top:26px;opacity:.9">Dalle 20:30 cena animata e karaoke con Berni Show · cena alla carta</div>`;
+const TO_NIGHT = `<div class="serif" style="font-size:31px;margin-top:26px;opacity:.9">A seguire, dalle 23:30, Mama Che Fuego con Amista &amp; Maret The Voice</div>`;
 
-// corona e cuore disegnati a mano (motivi delle grafiche Mamatò)
-const crown = (w, col = 'var(--crema)', sw = 7) => `<svg width="${w}" height="${w * .62}" viewBox="0 0 100 62" style="overflow:visible;filter:url(#rough)">
-  <path d="M8 50 L4 12 L28 34 L48 4 L68 33 L94 10 L90 50 Z" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round"/>
-  <path d="M10 58 Q50 52 90 58" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linecap="round"/></svg>`;
-const heart = (w, col = 'var(--rosso)') => `<svg width="${w}" height="${w}" viewBox="0 0 40 40" style="filter:url(#rough);vertical-align:middle">
-  <path d="M20 34 C4 22 2 12 9 7 C14 4 19 8 20 13 C21 8 27 3 32 7 C39 13 34 23 20 34Z" fill="none" stroke="${col}" stroke-width="3.5" stroke-linejoin="round"/></svg>`;
-// freccia a mano libera
-const arrow = (w, h, flip = false, col = 'var(--crema)') => `<svg width="${w}" height="${h}" viewBox="0 0 100 100" preserveAspectRatio="none" style="overflow:visible;filter:url(#rough);${flip ? 'transform:scaleX(-1)' : ''}">
-  <path d="M5 5 Q90 10 80 90" fill="none" stroke="${col}" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
-  <path d="M62 74 L80 92 L94 70" fill="none" stroke="${col}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>`;
-
-// microfono disegnato a mano
-function micDoodle(w) {
-  const c = 'var(--crema)';
-  let grid = '';
-  for (let i = 0; i < 6; i++) grid += `<path d="M${30 + i * 14} 22 Q${44 + i * 10} 70 ${36 + i * 12} 118" stroke="${c}" stroke-width="3" fill="none" opacity=".8"/>`;
-  for (let i = 0; i < 5; i++) grid += `<path d="M24 ${40 + i * 18} Q70 ${32 + i * 18} 116 ${42 + i * 18}" stroke="${c}" stroke-width="3" fill="none" opacity=".8"/>`;
-  return `<svg width="${w}" height="${w * 2.3}" viewBox="0 0 140 322" style="overflow:visible;filter:url(#rough)">
-    <ellipse cx="70" cy="70" rx="52" ry="58" fill="rgba(13,6,8,.55)" stroke="${c}" stroke-width="7"/>${grid}
-    <path d="M30 122 Q70 138 110 122" stroke="var(--rosso)" stroke-width="12" fill="none" stroke-linecap="round"/>
-    <path d="M36 132 L54 300 Q70 312 86 300 L104 132" fill="rgba(13,6,8,.55)" stroke="${c}" stroke-width="7" stroke-linejoin="round"/>
-    <path d="M58 200 h24" stroke="var(--senape)" stroke-width="8" stroke-linecap="round"/>
-    <path d="M70 306 Q60 340 20 330 Q-30 316 -40 360" stroke="${c}" stroke-width="5" fill="none" stroke-linecap="round"/>
-    <g stroke="var(--senape)" stroke-width="6" fill="none" stroke-linecap="round">
-      <path d="M140 20 q14 -10 22 -24"/><path d="M150 52 q18 -2 30 -12"/><path d="M146 86 q18 6 30 2"/></g>
-  </svg>`;
-}
-
-// palme in silhouette per gli angoli
-function palm(x, base, h, lean, s, col) {
-  const tx = x + lean, ty = base - h;
-  let g = `<path d="M${x} ${base} Q${x + lean * .2} ${base - h * .55} ${tx} ${ty}" stroke="${col}" stroke-width="${22 * s}" fill="none" stroke-linecap="round"/>`;
-  [-175, -150, -120, -80, -45, -15, 15, 160, -100, 40].forEach(a => {
-    const r = a * Math.PI / 180, L = (140 + rnd() * 70) * s;
-    const ex = tx + Math.cos(r) * L, ey = ty + Math.sin(r) * L * .6 + L * .45;
-    const cx = tx + Math.cos(r) * L * .55, cy = ty + Math.sin(r) * L * .6 - 30 * s;
-    const nx = -Math.sin(r) * 18 * s, ny = Math.cos(r) * 18 * s;
-    g += `<path d="M${tx} ${ty} Q${cx + nx} ${cy + ny} ${ex} ${ey} Q${cx - nx} ${cy - ny} ${tx} ${ty}Z" fill="${col}"/>`;
-  });
-  return g;
-}
-const palms = (H, col) => `<svg class="layer" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-  ${palm(-60, H * .62, 520, 110, 1.2, col)}${palm(1140, H * .58, 500, -120, 1.15, col)}</svg>`;
-
-const grain = H => `<svg class="layer grain" width="${W}" height="${H}"><filter id="g${H}${seed}"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#g${H}${seed})"/></svg>`;
-const vignette = `<div class="layer" style="box-shadow:inset 0 0 120px 30px rgba(0,0,0,.85)"></div>`;
-
-// foto del locale come ritaglio strappato (h opzionale: ritaglio con object-fit)
-function snap(src, x, y, w, rot, h = 0, pos = 'center', z = 1) {
-  const img = h ? `<img src="${src}" style="width:100%;height:${h}px;object-fit:cover;object-position:${pos};display:block">`
-                : `<img src="${src}" style="width:100%;display:block">`;
-  return `<div class="abs" style="left:${x}px;top:${y}px;width:${w}px;transform:rotate(${rot}deg);filter:drop-shadow(0 18px 26px rgba(0,0,0,.65));z-index:${z}">
-    <div style="background:var(--crema);padding:10px;${tornClip(1.6, 2.5)}">${img}</div></div>`;
-}
-const head = y => `<div class="abs tracked" style="left:0;right:0;top:${y}px">Mamatò presents</div>`;
-
-function footer(bottom, handLine) {
-  return `<div class="abs foot" style="bottom:${bottom}px;z-index:5">
-    <div class="hand" style="font-size:27px;margin-bottom:22px;text-transform:none;text-shadow:0 0 10px #000">${handLine}</div>
-    <img class="logo" src="assets/logo-crema.png">
-    <div class="tag">DRINKS FOOD AND AMORE</div>
-    <div class="book">PRENOTA IL TUO TAVOLO · <span>0522 1900196</span></div>
-    <div class="addr">VIA G. GALILEI, 13 · ZONA RAME · REGGIOLO (RE)</div></div>`;
-}
-const footShade = (H, fb) => `<div class="layer" style="z-index:4;background:linear-gradient(180deg,rgba(13,6,8,0) ${H - fb - 340}px,rgba(13,6,8,.9) ${H - fb - 230}px,var(--nero) ${H - fb - 130}px)"></div>`;
-
-function dateCard(x, y, rot, time, z = 3) {
-  return `<div class="abs paper" style="left:${x}px;top:${y}px;padding:26px 40px 24px;white-space:nowrap;transform:rotate(${rot}deg);z-index:${z};${tornClip()}">
-    ${paperTex}
-    <div class="hand" style="font-size:30px;position:relative">venerdì</div>
-    <div style="font-family:Knewave;font-size:76px;line-height:.95;position:relative">30 OTTOBRE</div>
-    <div style="font-weight:800;font-size:30px;letter-spacing:3px;color:var(--rosso);position:relative;margin-top:6px">DALLE ${time}</div></div>`;
-}
-function tape(x, y, rot, kicker, main, sub, z = 3, bg = 'var(--rosso)') {
-  return `<div class="abs tape" style="left:${x}px;top:${y}px;padding:22px 40px 22px;background:${bg};transform:rotate(${rot}deg);z-index:${z};${tornClip(4, 3)};box-shadow:0 18px 30px rgba(0,0,0,.5)">
-    <div class="tracked" style="font-size:17px;letter-spacing:8px;font-weight:700">${kicker}</div>
-    <div style="font-family:Knewave;font-size:58px;line-height:1.05;text-align:center;white-space:nowrap">${main}</div>
-    ${sub ? `<div style="font-family:Knewave;font-size:42px;line-height:1;text-align:center;white-space:nowrap">${sub}</div>` : ''}</div>`;
-}
-// striscia di nastro con testo corrente (generi, claim)
-function strip(x, y, w, rot, html, bg = 'var(--nero)', col = 'var(--crema)', fs = 30, z = 3) {
-  return `<div class="abs hand" style="left:${x}px;top:${y}px;width:${w}px;padding:14px 0 10px;text-align:center;font-size:${fs}px;background:${bg};color:${col};transform:rotate(${rot}deg);z-index:${z};${tornClip(6, 2)}">${html}</div>`;
-}
-const SL = '<span style="color:var(--rosso)">/</span>';
-const GENRES = `Reggaeton ${SL} Latin hits ${SL} Dembow ${SL} Brazilian funk`;
-const FUEGO_TITLE = (y, col = 'var(--senape)', size = 300) => `
-  <div class="abs hand" style="left:150px;top:${y - 54}px;font-size:84px;transform:rotate(-7deg);text-transform:none;z-index:6">Mama che</div>
-  <div class="abs title-shadow" style="left:0;right:0;top:${y}px;text-align:center;z-index:5"><div class="brush" style="font-size:${size}px;color:${col}">FUEGO</div></div>
-  <div class="abs" style="left:742px;top:${y - 45}px;transform:rotate(12deg);z-index:6">${crown(120)}</div>`;
-
-// ---------- i 6 soggetti ----------
 const S = {
-  // A · la facciata del Mamatò di notte, con la pista e la folla
-  fachada(y, H, fb) {
-    let h = `<img class="abs" src="assets/facciata-fuego.jpg" style="left:-30px;top:${y(-30)}px;width:1140px">
-      <div class="layer" style="background:linear-gradient(180deg,var(--nero) ${y(0) + 110}px,rgba(13,6,8,.25) ${y(470)}px,rgba(13,6,8,0) ${y(640)}px)"></div>`;
-    h += palms(H, '#2a0610') + head(y(48)) + FUEGO_TITLE(y(150));
-    h += `<div class="abs hand" style="left:0;right:0;top:${y(455)}px;text-align:center;font-size:33px;transform:rotate(-2.5deg);color:var(--crema);z-index:3">${GENRES}</div>`;
-    h += `<div class="abs hand note" style="left:60px;top:${y(560)}px;transform:rotate(-7deg);z-index:3">Perreo hasta<br>el amanecer ${heart(30, 'var(--senape)')}</div>`;
-    h += snap('assets/pista-dj.jpg', 618, y(548), 410, 4);
-    h += snap('assets/folla-duo.jpg', -30, y(840), 640, -3, 270, 'center 40%');
-    h += `<div class="abs hand note" style="left:640px;top:${y(530)}px;transform:rotate(-5deg);font-size:28px;z-index:3">la fiesta es aquí ${heart(26, 'var(--senape)')}</div>`;
-    h += dateCard(56, y(690), -4, '23:30');
-    h += tape(456, y(872), -2.5, 'On stage', 'AMISTA', '+ MARET THE VOICE');
-    return h + footShade(H, fb) + footer(fb, `Dalle 20:30 cena animata &amp; karaoke con Berni Show · cena alla carta`);
-  },
+  // A · la facciata del Mamatò: titolo in basso, la sala illuminata resta protagonista
+  facciata: (T, B) => `
+    <img class="bg" src="assets/bg-a-facciata.jpg" style="object-position:center 40%;transform:scale(1.2);transform-origin:center 78%">
+    ${shade('linear-gradient(180deg,rgba(13,6,8,.75) 0%,rgba(13,6,8,0) 18%,rgba(13,6,8,0) 38%,rgba(13,6,8,.88) 62%,var(--nero) 86%)')}
+    <div class="top center" style="top:${T}px">${LOGO}</div>
+    <div class="bottom center" style="bottom:${B}px">
+      <div class="serif" style="font-size:96px;margin-bottom:14px">Mama che</div>
+      <div class="display" style="font-size:300px;margin-top:-6px">Fuego</div>
+      <div class="rule"></div>
+      ${DATE('23:30')}
+      <div class="serif gold" style="font-size:54px;margin-top:22px">Amista &amp; Maret The Voice</div>
+      <div style="margin-top:16px">${GENRES}</div>
+      ${TO_DINNER}${BOOK}
+    </div>`,
 
-  // B · collage di carta strappata, come le grafiche latin del Mamatò
-  collage(y, H, fb) {
-    let h = palms(H, '#22050c') + head(y(48));
-    h += snap('assets/pista-dj-full.jpg', -24, y(410), 640, -4, 470, 'center 70%', 1);
-    h += snap('assets/facciata-duo.jpg', 560, y(380), 500, 5, 400, 'center 35%', 2);
-    h += snap('assets/folla-bw.jpg', -30, y(800), 1140, 2, 250, 'center 45%', 1);
-    h += `<div class="layer" style="background:linear-gradient(180deg,var(--nero) ${y(0) + 100}px,rgba(13,6,8,0) ${y(0) + 380}px)"></div>`;
-    h += FUEGO_TITLE(y(110), 'var(--crema)');
-    h += strip(-20, y(392), 1120, -3.5, GENRES, 'var(--senape)', 'var(--nero)', 32, 4);
-    h += `<div class="abs hand note" style="left:640px;top:${y(800)}px;transform:rotate(6deg);z-index:4">Buena música<br>buena gente ${heart(30, 'var(--senape)')}</div>`;
-    h += `<div class="abs hand" style="left:50px;top:${y(500)}px;font-size:34px;color:var(--senape);transform:rotate(-8deg);z-index:4;text-shadow:0 0 12px #000">La fiesta<br>es aquí ${heart(30)}</div>`;
-    h += dateCard(40, y(735), -5, '23:30', 5);
-    h += tape(500, y(905), 3, 'On stage', 'AMISTA', '+ MARET THE VOICE', 5);
-    return h + footShade(H, fb) + footer(fb, `Dalle 20:30 cena animata &amp; karaoke con Berni Show · cena alla carta`);
-  },
+  // B · la consolle col neon: impaginazione editoriale, allineata a sinistra
+  consolle: (T, B) => `
+    <img class="bg" src="assets/bg-b-consolle.jpg" style="object-position:center 60%">
+    ${shade('linear-gradient(180deg,rgba(13,6,8,.9) 0%,rgba(13,6,8,.35) 34%,rgba(13,6,8,.1) 50%,rgba(13,6,8,.85) 72%,var(--nero) 90%)')}
+    <div class="top left" style="top:${T}px">
+      ${LOGO}
+      <div class="serif" style="font-size:96px;margin-top:56px;margin-bottom:14px">Mama che</div>
+      <div class="display" style="font-size:300px;margin-top:-4px">Fuego</div>
+      <div style="margin-top:20px">${GENRES}</div>
+    </div>
+    <div class="bottom left" style="bottom:${B}px">
+      <div class="row" style="align-items:flex-end;gap:40px">
+        <div class="display gold" style="font-size:190px;letter-spacing:.02em">30.10</div>
+        <div style="padding-bottom:10px"><div class="caps">Venerdì</div><div class="caps">dalle 23:30</div>
+          <div class="serif" style="font-size:44px;margin-top:10px">Amista &amp; Maret The Voice</div></div>
+      </div>
+      ${TO_DINNER}${BOOK}
+    </div>`,
 
-  // C · editoriale: la consolle col neon a tutto campo, tipografia gigante
-  neon(y, H, fb) {
-    let h = `<img class="abs" src="assets/pista-dj-full.jpg" style="left:-60px;top:${y(-40)}px;width:1200px">
-      <div class="layer" style="background:linear-gradient(180deg,rgba(13,6,8,.92) ${y(0) + 60}px,rgba(13,6,8,.3) ${y(430)}px,rgba(13,6,8,.05) ${y(620)}px,rgba(13,6,8,.35) ${y(800)}px)"></div>`;
-    h += head(y(48));
-    h += `<div class="abs hand" style="left:70px;top:${y(96)}px;font-size:84px;transform:rotate(-7deg);text-transform:none;z-index:6">Mama che</div>
-      <div class="abs" style="left:0;right:0;top:${y(150)}px;text-align:center;z-index:5">
-        <div style="font-family:Knewave;line-height:.9;font-size:330px;position:relative;display:inline-block">
-          <span style="position:absolute;left:16px;top:14px;color:var(--rosso);filter:url(#brush)">FUEGO</span>
-          <span style="position:relative;color:transparent;-webkit-text-stroke:6px var(--crema)">FUEGO</span></div></div>
-      <div class="abs" style="left:800px;top:${y(105)}px;transform:rotate(14deg);z-index:6">${crown(110, 'var(--senape)')}</div>`;
-    // blocco data gigante + generi in colonna
-    h += `<div class="abs" style="left:60px;top:${y(560)}px;z-index:5;text-shadow:0 6px 30px rgba(0,0,0,.8)">
-        <div class="hand" style="font-size:40px;color:var(--crema)">venerdì</div>
-        <div style="font-family:Knewave;font-size:250px;line-height:.8;color:var(--senape);filter:url(#brush)">30</div>
-        <div style="font-family:Knewave;font-size:70px;line-height:1">OTTOBRE</div></div>
-      <div class="abs" style="right:60px;top:${y(585)}px;text-align:right;z-index:5;text-shadow:0 4px 20px #000">
-        <div class="tracked" style="text-align:right;font-weight:700;font-size:20px">dalle</div>
-        <div style="font-family:Knewave;font-size:110px;line-height:1;color:var(--crema)">23:30</div>
-        <div style="font-weight:700;letter-spacing:6px;font-size:22px;line-height:1.9;margin-top:10px">REGGAETON<br>LATIN HITS<br>DEMBOW<br>BRAZILIAN FUNK</div></div>`;
-    h += snap('assets/facciata-duo.jpg', 760, y(840), 250, 7, 230, 'center 30%', 4);
-    h += tape(40, y(905), -3, 'On stage', 'AMISTA + MARET THE VOICE', '', 5);
-    return h + footShade(H, fb) + footer(fb, `Dalle 20:30 cena animata &amp; karaoke con Berni Show · cena alla carta`);
-  },
+  // C · la folla davanti al Mamatò: tutto centrato, artisti in evidenza
+  folla: (T, B) => `
+    <img src="assets/bg-c-folla.jpg" class="bg bg-c" style="object-position:center 86%">
+    ${shade('linear-gradient(180deg,rgba(13,6,8,.92) 0%,rgba(13,6,8,.7) 22%,rgba(13,6,8,.15) 44%,rgba(13,6,8,.85) 68%,var(--nero) 88%)')}
+    <div class="top center" style="top:${T}px">
+      ${LOGO}
+      <div class="serif" style="font-size:150px;margin-top:60px;line-height:.85">Mama che <span class="gold">Fuego</span></div>
+      <div style="margin-top:28px">${GENRES}</div>
+    </div>
+    <div class="bottom center" style="bottom:${B}px">
+      <div class="caps" style="font-size:16px;opacity:.85">On stage</div>
+      <div class="display" style="font-size:118px;margin-top:14px">Amista</div>
+      <div class="serif gold" style="font-size:46px;margin:6px 0 4px">&amp;</div>
+      <div class="display" style="font-size:118px">Maret The Voice</div>
+      <div class="rule"></div>
+      ${DATE('23:30')}
+      ${TO_DINNER}${BOOK}
+    </div>`,
 
-  // D · il cantante esce dalla foto e invade il titolo
-  popout(y, H, fb) {
-    let h = palms(H, '#2a0a06') + head(y(48));
-    h += `<div class="abs hand" style="left:110px;top:${y(96)}px;font-size:80px;transform:rotate(-7deg);text-transform:none;z-index:3">Cena animata</div>
-      <div class="abs title-shadow" style="left:0;right:0;top:${y(165)}px;text-align:center;z-index:2"><div class="brush" style="font-size:208px;color:var(--crema)">KARAOKE</div></div>
-      <div class="abs" style="left:880px;top:${y(118)}px;transform:rotate(14deg);z-index:3">${crown(96, 'var(--senape)')}</div>`;
-    // cornice + scontorno nello stesso sistema di riferimento (scala del crop originale)
-    const fw = 860, s = (fw - 20) / 1216, fx = 40, fy = y(560);
-    h += `<div class="abs" style="left:${fx}px;top:${fy}px;width:${fw}px;transform:rotate(-2deg);z-index:4">
-      <div style="filter:drop-shadow(0 18px 26px rgba(0,0,0,.65))"><div style="background:var(--crema);padding:10px;${tornClip(1.6, 2.5)}">
-        <img src="assets/karaoke-basso.jpg" style="width:100%;display:block"></div></div>
-      <img src="assets/cut-cantante.png" style="position:absolute;left:${10 + 230 * s}px;top:${10 + (260 - 600) * s}px;width:${670 * s}px" class="sticker"></div>`;
-    h += `<div class="abs hand" style="left:0;right:0;top:${y(370)}px;text-align:left;padding-left:50px;font-size:28px;transform:rotate(-2deg);color:var(--senape);z-index:3">Se come ${SL} se canta ${SL} se goza ${heart(30)}</div>`;
-    h += snap('assets/cena-tovaglioli.jpg', 770, y(470), 290, 7, 0, 'center', 5);
-    h += snap('assets/cena-ragazze.jpg', 790, y(680), 270, -5, 0, 'center', 5);
-    h += dateCard(30, y(880), -3, '20:30', 6);
-    h += tape(600, y(905), 4, 'Al microfono', 'BERNI SHOW', '', 6);
-    h += `<div class="abs hand note" style="left:650px;top:${y(1015)}px;font-size:26px;transform:rotate(3deg);z-index:6">cena alla carta ${heart(24, 'var(--senape)')}</div>`;
-    return h + footer(fb, `Poi dalle 23:30 MAMA CHE FUEGO con Amista + Maret The Voice`);
-  },
+  // D · il cantante al microfono tra i tavoli
+  cantante: (T, B) => `
+    <img class="bg" src="assets/bg-d-cantante.jpg" style="object-position:40% 20%">
+    ${shade('linear-gradient(180deg,rgba(13,6,8,.7) 0%,rgba(13,6,8,0) 16%,rgba(13,6,8,0) 44%,rgba(13,6,8,.88) 66%,var(--nero) 86%)')}
+    <div class="top center" style="top:${T}px">${LOGO}</div>
+    <div class="bottom center" style="bottom:${B}px">
+      <div class="serif" style="font-size:96px;margin-bottom:14px">Cena animata</div>
+      <div class="display" style="font-size:250px;margin-top:-2px">Karaoke</div>
+      <div class="rule"></div>
+      ${DATE('20:30')}
+      <div class="serif gold" style="font-size:54px;margin-top:22px">con Berni Show</div>
+      <div class="caps" style="font-size:16px;margin-top:14px;opacity:.85">Cena alla carta</div>
+      ${TO_NIGHT}${BOOK}
+    </div>`,
 
-  // E · la tavolata che sventola i tovaglioli, a tutto campo
-  tavolata(y, H, fb) {
-    let h = `<img class="abs" src="assets/cena-tovaglioli.jpg" style="left:-120px;top:${y(300)}px;width:1320px">
-      <div class="layer" style="background:linear-gradient(180deg,var(--nero) ${y(300)}px,rgba(13,6,8,.45) ${y(420)}px,rgba(13,6,8,.35) ${y(700)}px)"></div>`;
-    h += head(y(48));
-    h += `<div class="abs title-shadow" style="left:0;right:0;top:${y(90)}px;text-align:center;z-index:5"><div class="brush" style="font-size:250px;color:var(--senape)">CENA</div></div>
-      <div class="abs hand" style="left:0;right:0;top:${y(300)}px;text-align:center;font-size:62px;color:var(--crema);transform:rotate(-4deg);text-transform:none;z-index:6;text-shadow:0 0 18px #000">animata &amp; karaoke ${heart(46)}</div>
-      <div class="abs" style="left:770px;top:${y(70)}px;transform:rotate(14deg);z-index:6">${crown(100)}</div>`;
-    h += `<img class="abs" src="assets/cut-ragazze.png" style="left:-70px;top:${y(610)}px;width:700px;z-index:3" class="sticker">`;
-    h += strip(560, y(450), 500, 4, `Se come ${SL} se canta ${SL} se goza`, 'var(--nero)', 'var(--senape)', 28, 4);
-    h += dateCard(560, y(640), 4, '20:30', 5);
-    h += tape(590, y(840), -3, 'Al microfono', 'BERNI SHOW', '', 5);
-    h += `<div class="abs hand note" style="left:640px;top:${y(965)}px;font-size:26px;transform:rotate(-2deg);z-index:5">cena alla carta ${heart(24, 'var(--senape)')}</div>`;
-    h += snap('assets/karaoke-cantante.jpg', 40, y(470), 300, -6, 0, 'center', 2);
-    h += `<div class="abs" style="left:300px;top:${y(470)}px;transform:rotate(18deg);z-index:4">${micDoodle(56)}</div>`;
-    return h + footShade(H, fb) + footer(fb, `Poi alle 23:30 Mama Che Fuego con Amista + Maret The Voice`);
-  },
+  // E · le ragazze che cantano a tavola: titolo in alto a sinistra
+  ragazze: (T, B) => `
+    <img class="bg" src="assets/bg-e-ragazze.jpg" style="object-position:28% center">
+    ${shade('linear-gradient(180deg,rgba(13,6,8,.92) 0%,rgba(13,6,8,.55) 26%,rgba(13,6,8,0) 42%,rgba(13,6,8,.1) 56%,rgba(13,6,8,.9) 74%,var(--nero) 90%)')}
+    <div class="top left" style="top:${T}px">
+      ${LOGO}
+      <div class="serif" style="font-size:110px;margin-top:56px;margin-bottom:10px">Cena animata</div>
+      <div class="row" style="gap:22px;align-items:center"><span class="serif gold" style="font-size:110px">&amp;</span>
+        <span class="display" style="font-size:200px">Karaoke</span></div>
+    </div>
+    <div class="bottom left" style="bottom:${B}px">
+      ${DATE('20:30')}
+      <div class="serif gold" style="font-size:54px;margin-top:18px">con Berni Show · cena alla carta</div>
+      ${TO_NIGHT}${BOOK}
+    </div>`,
 
-  // F · una notte, tre momenti: dalla cena al perreo
-  noche(y, H, fb) {
-    let h = palms(H, '#2a0a06') + head(y(48));
-    h += `<div class="abs title-shadow" style="left:0;right:0;top:${y(92)}px;text-align:center;z-index:5">
-        <div class="brush" style="font-size:132px;color:var(--crema)">DALLA CENA</div>
-        <div class="brush" style="font-size:132px;color:var(--senape);margin-top:-6px">AL PERREO</div></div>
-      <div class="abs hand" style="left:0;right:0;top:${y(338)}px;text-align:center;font-size:36px;color:var(--rosso);transform:rotate(-2deg)">venerdì 30 ottobre ${heart(30, 'var(--senape)')}</div>
-      <div class="abs" style="left:840px;top:${y(60)}px;transform:rotate(14deg);z-index:6">${crown(96, 'var(--senape)')}</div>`;
-    h += snap('assets/cena-ragazze.jpg', 30, y(410), 540, -4, 270, 'center 40%', 1);
-    h += snap('assets/karaoke-cantante.jpg', 500, y(540), 550, 3, 300, 'center 35%', 2);
-    h += snap('assets/pista-dj.jpg', 40, y(720), 500, -2, 250, 'center 65%', 3);
-    const lbl = (x, yy, rot, t, s, z = 6) => `<div class="abs" style="left:${x}px;top:${yy}px;transform:rotate(${rot}deg);z-index:${z};background:var(--rosso);padding:10px 22px 8px;white-space:nowrap;${tornClip(5, 4)}">
-        <span style="font-family:Knewave;font-size:44px">${t}</span> <span class="hand" style="color:var(--crema);font-size:26px">${s}</span></div>`;
-    h += lbl(50, y(395), -6, '20:30', 'cena alla carta');
-    h += lbl(600, y(830), 4, 'KARAOKE', 'con Berni Show');
-    h += lbl(40, y(965), -2, '23:30', 'Mama che Fuego · Amista + Maret The Voice');
-    h += `<div class="abs" style="left:575px;top:${y(440)}px;z-index:5">${arrow(110, 90)}</div>
-      <div class="abs" style="left:560px;top:${y(880)}px;z-index:5;transform:rotate(80deg)">${arrow(80, 80, true)}</div>`;
-    return h + footShade(H, fb) + footer(fb, `Una sola notte: si mangia, si canta, si balla`);
-  },
+  // F · la tavolata in festa: una frase sola, centrata
+  tavolata: (T, B) => `
+    <img class="bg" src="assets/bg-f-tavolata.jpg" style="object-position:58% center">
+    ${shade('linear-gradient(180deg,rgba(13,6,8,.85) 0%,rgba(13,6,8,.3) 24%,rgba(13,6,8,.1) 42%,rgba(13,6,8,.88) 66%,var(--nero) 86%)')}
+    <div class="top center" style="top:${T}px">${LOGO}</div>
+    <div class="bottom center" style="bottom:${B}px">
+      <div class="serif" style="font-size:118px;line-height:.9">Si mangia,<br>si canta.</div>
+      <div class="display gold" style="font-size:96px;margin-top:34px;letter-spacing:.08em">Cena animata</div><div class="display" style="font-size:96px;margin-top:6px;letter-spacing:.08em"><span class="serif gold" style="font-size:90px;text-transform:none">&amp;</span> Karaoke</div>
+      <div class="rule"></div>
+      ${DATE('20:30')}
+      <div class="serif" style="font-size:46px;margin-top:18px">con Berni Show · cena alla carta</div>
+      ${TO_NIGHT}${BOOK}
+    </div>`,
 };
 
 function build(el) {
-  const H = el.offsetHeight, story = H > 1400, kind = el.id.split('-')[1];
-  const y = v => story ? (v < 560 ? v + 220 : v + 330) : v;   // il 9:16 rispetta le safe zone
-  const fb = story ? 250 : 46;
-  seed = kind.length * 7 + 3;
-  el.innerHTML = S[kind](y, H, fb) + vignette + grain(H);
+  const story = el.offsetHeight > 1400, kind = el.id.split('-')[1];
+  const T = story ? 250 : 74, B = story ? 250 : 70;   // le stories rispettano le safe zone di 250px
+  el.innerHTML = S[kind](T, B) + `<div class="frame"></div>` + grain(el.id);
 }
 
 document.fonts.ready.then(async () => {
